@@ -5,4 +5,5 @@
 Data set : [kaggle : sustainable energy](https://www.kaggle.com/datasets/anshtanwar/global-data-on-sustainable-energy)
 (500ko)
 
-   
+Projet en autonomie complète dans le cadre de l'[unité data viz](https://perso.esiee.fr/~courivad/DSIA4101A/).
+Réaliser en binome.

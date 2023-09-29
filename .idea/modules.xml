@@ -2,7 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+<<<<<<< HEAD
       <module fileurl="file://$PROJECT_DIR$/.idea/Strava-DashBoard.iml" filepath="$PROJECT_DIR$/.idea/Strava-DashBoard.iml" />
+=======
+      <module fileurl="file://$PROJECT_DIR$/.idea/DashBoard-Energy.iml" filepath="$PROJECT_DIR$/.idea/DashBoard-Energy.iml" />
+>>>>>>> origin/main
     </modules>
   </component>
 </project>

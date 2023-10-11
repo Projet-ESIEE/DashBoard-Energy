@@ -16,5 +16,5 @@ Data set *3.* : [Country to continent](https://www.kaggle.com/datasets/statchait
 Projet en **autonomie complète** dans le cadre de [l'unité data viz] de E4 à **ESIEE Paris** (https://perso.esiee.fr/~courivad/DSIA4101A/).
 
 
-
+ sg
 https://dash.plotly.com/urls#multi-page-apps-without-pages

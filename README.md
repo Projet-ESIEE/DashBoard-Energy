@@ -18,3 +18,10 @@ Projet en **autonomie complète** dans le cadre de [l'unité data viz] de E4 à 
 
  sg
 https://dash.plotly.com/urls#multi-page-apps-without-pages
+
+
+GeoJSON
+https://datahub.io/core/geo-countries#pandas
+
+https://geojson-maps.ash.ms/
+

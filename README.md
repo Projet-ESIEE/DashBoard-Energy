@@ -13,7 +13,7 @@ Data set *3.* : [Country to continent](https://www.kaggle.com/datasets/statchait
 
 ---
 
-Projet en **autonomie complète** dans le cadre de [l'unité data viz] de E4 à **ESIEE Paris** (https://perso.esiee.fr/~courivad/DSIA4101A/).
+Projet en **autonomie complète** dans le cadre de [l'unité data viz]de E4 à **ESIEE Paris** (https://perso.esiee.fr/~courivad/DSIA4101A/).
 
 
  sg
@@ -24,5 +24,10 @@ GeoJSON
 https://datahub.io/core/geo-countries#pandas
 
 https://geojson-maps.ash.ms/
+
+css code pen : 
+https://codepen.io/chriddyp/pen/bWLwgP?editors=1100
+
+    
 
  

@@ -15,7 +15,8 @@
 
 
 html {
-    font-size: 62.5%
+    font-size: 62.5%;
+    background-color: wheat;
 }
 
 body {
@@ -36,7 +37,8 @@ h1 {
     font-size: 4.5rem;
     line-height: 1.2;
     letter-spacing: -.1rem;
-    margin-bottom: 2rem
+    margin-bottom: 2rem;
+    color : rebeccapurple;
 }
 
 h2 {

@@ -13,8 +13,11 @@ app.layout = html.Div([
         ) for page in dash.page_registry.values()
     ]),
     dash.page_container,
-    footer.footer()
-])
+    # footer.footer(),
+    html.Footer(html.P("footer"))
+    ]
+)
+
 
 if __name__ == '__main__':
     app.run(debug=True)

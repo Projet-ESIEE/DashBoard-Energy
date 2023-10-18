@@ -5,23 +5,95 @@ dash.register_page(__name__, order=3)
 
 
 markdown_text = '''
-### Dash and Markdown
+# DashBoard-Energy : 
+[![Benoit Profile](https://img.shields.io/badge/Made%20with-Benoit%20Marchadier-brightgreen)](https://github.com/bebe0106)
+[![Antoine Profile](https://img.shields.io/badge/Made%20with-Antoine%20Aubert-blue)](https://github.com/Aubert-Antoine)
 
-Dash apps can be written in Markdown.
-Dash uses the [CommonMark](http://commonmark.org/)
-specification of Markdown.
-Check out their [60 Second Markdown Tutorial](http://commonmark.org/help/)
-if this is your first introduction to Markdown!
+# DashBoard Energy User Guide : 
+This is the user guide page of our app : DashBoard Energy.
+
+Please find below the different subsections of this page :
+
+1. [Introduction](#introduction)
+2. [Data](#data)
+3. [Data visualisation](#data-visualisation)
+4. [Pages](#pages)
+5. [How to Guide](#how-to-guide)    
+6. [Conclusion](#conclusion)
+
+## Introduction 
+This app is a dashboard that allows you to visualize the evolution of the energy consumption of the world's countries over the last 20 years. 
+This project is part of the Data Science course of the Master 2 of the ESIEE program, in the [data visualisation unit](https://perso.esiee.fr/~courivad/DSIA4101A/).
+
+## Data
+The data used in this project comes from 4 different sources, available upper in this page. They are all in open source and free to use.
+The main file is **kaggle : sustainable energy** and it is enhanced by the other files. One contain the HDI, and the other the continent and sub-regions of each country. 
+Finally, the GeoJSON file is used to draw the map. The goal is to get all the data needed to show interesting graphs, and deduct some relevant information from them.
+
+The data are cleaned and processed in the [process_data.py]() file. The data are then stored in the [dataset]() folder.
+
+Data set *1.* : [kaggle : sustainable energy](https://www.kaggle.com/datasets/anshtanwar/global-data-on-sustainable-energy) (500ko)
+Data set *2.* : [Our world in data : human development index](https://ourworldindata.org/human-development-index) (146ko)
+Data set *3.* : [Country to continent](https://www.kaggle.com/datasets/statchaitya/country-to-continent/data) (16ko)
+Geo.JSON *4.* : [GeoJSON](https://geojson-maps.ash.ms/) ??? (1.5Mo)
+
+#### Description of the data set *1.* :
+> Uncover this comprehensive dataset showcasing sustainable energy indicators and other useful factors 
+> across all countries from 2000 to 2020. Dive into vital aspects such as electricity access, renewable energy, 
+> carbon emissions, energy intensity, Financial flows, and economic growth. Compare nations, track progress 
+> towards Sustainable Development Goal 7, and gain profound insights into global energy consumption patterns 
+> over time.
+
+
+#### Key Features of the data set *1.* : 
+* Entity: The name of the country or region for which the data is reported.
+* Year: The year for which the data is reported, ranging from 2000 to 2020.
+* Access to electricity (% of population): The percentage of population with access to electricity.
+* Access to clean fuels for cooking (% of population): The percentage of the population with primary reliance on clean fuels.
+* Renewable-electricity-generating-capacity-per-capita: Installed Renewable energy capacity per person
+* Financial flows to developing countries (US $): Aid and assistance from developed countries for clean energy projects.
+* Renewable energy share in total final energy consumption (%): Percentage of renewable energy in final energy consumption.
+* Electricity from fossil fuels (TWh): Electricity generated from fossil fuels (coal, oil, gas) in terawatt-hours.
+* Electricity from nuclear (TWh): Electricity generated from nuclear power in terawatt-hours.
+* Electricity from renewables (TWh): Electricity generated from renewable sources (hydro, solar, wind, etc.) in terawatt-hours.
+* Low-carbon electricity (% electricity): Percentage of electricity from low-carbon sources (nuclear and renewables).
+* Primary energy consumption per capita (kWh/person): Energy consumption per person in kilowatt-hours.
+* Energy intensity level of primary energy (MJ/$2011 PPP GDP): Energy use per unit of GDP at purchasing power parity.
+* Value_co2_emissions (metric tons per capita): Carbon dioxide emissions per person in metric tons.
+* Renewables (% equivalent primary energy): Equivalent primary energy that is derived from renewable sources.
+* GDP growth (annual %): Annual GDP growth rate based on constant local currency.
+* GDP per capita: Gross domestic product per person.
+* Density (P/Km2): Population density in persons per square kilometer.
+* Land Area (Km2): Total land area in square kilometers.
+* Latitude: Latitude of the country's centroid in decimal degrees.
+* Longitude: Longitude of the country's centroid in decimal degrees.
+
+
+## Data visualisation
+The web application is served by a Dash server. It is a tool to display [plotly](https://plotly/python.com) graphs. 
+The principle is to chose thanks to 'Multi-Select Dropdown' the area you would like to display. 
+Then all the graph should be updated, for the selection. 
+
+## Pages
+The app is composed of 3 pages :
+- **Home** : This page is the first page of the app. It contains a short description of the app and a link to the data source.
+- **Analytics** : This page contains the graphs of the app. It is composed of N graphs : 
+    - xxx
+    - xxx
+    - xxx
+- **User Guide** : This current page. It contains a description of the app and a guide to use it.
+
+## How to Guide
+
+...
+
+## Conclusion
+...
 '''
 
 layout = html.Div(
     className="content",
     children=[
-        html.H1('This is our user guide page'),
         dcc.Markdown(children=markdown_text),
-        html.Div('...'),
-        html.P('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam quam est, ultrices egestas sapien a, interdum tempus arcu. Sed sed porta turpis. Praesent malesuada, augue vulputate commodo commodo, felis dui fermentum odio, a maximus neque urna eget purus. Donec tempus auctor molestie. Sed varius mattis magna et iaculis. Donec pharetra orci vitae urna rutrum, non vulputate felis eleifend. Sed tincidunt volutpat elementum. Morbi fermentum vehicula sem ut volutpat. Phasellus blandit tortor ante, eleifend vulputate libero accumsan sed. Aenean a mattis magna. Nam vehicula non odio sed vulputate. Nullam malesuada neque vulputate, tristique quam non, fermentum nunc. Praesent feugiat, metus non congue semper, ante lectus feugiat orci, a interdum lacus ligula eget lectus. Sed quis tellus egestas, tristique leo et, interdum sapien. Curabitur rutrum mi vitae ligula pulvinar fringilla. Aenean cursus volutpat sem ut elementum. Morbi sed arcu in lorem ullamcorper volutpat a vel orci. Donec in tincidunt leo. Integer tempus efficitur nisi vel porttitor. Donec vel fringilla quam, ac sollicitudin diam. Nam vel ante lorem. Vivamus aliquet purus in magna semper, quis tempor orci volutpat. Cras neque diam, lobortis ac sem vitae, pharetra ultricies nisi. Praesent ut ullamcorper erat.'),
-        html.P('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam quam est, ultrices egestas sapien a, interdum tempus arcu. Sed sed porta turpis. Praesent malesuada, augue vulputate commodo commodo, felis dui fermentum odio, a maximus neque urna eget purus. Donec tempus auctor molestie. Sed varius mattis magna et iaculis. Donec pharetra orci vitae urna rutrum, non vulputate felis eleifend. Sed tincidunt volutpat elementum. Morbi fermentum vehicula sem ut volutpat. Phasellus blandit tortor ante, eleifend vulputate libero accumsan sed. Aenean a mattis magna. Nam vehicula non odio sed vulputate. Nullam malesuada neque vulputate, tristique quam non, fermentum nunc. Praesent feugiat, metus non congue semper, ante lectus feugiat orci, a interdum lacus ligula eget lectus. Sed quis tellus egestas, tristique leo et, interdum sapien. Curabitur rutrum mi vitae ligula pulvinar fringilla. Aenean cursus volutpat sem ut elementum. Morbi sed arcu in lorem ullamcorper volutpat a vel orci. Donec in tincidunt leo. Integer tempus efficitur nisi vel porttitor. Donec vel fringilla quam, ac sollicitudin diam. Nam vel ante lorem. Vivamus aliquet purus in magna semper, quis tempor orci volutpat. Cras neque diam, lobortis ac sem vitae, pharetra ultricies nisi. Praesent ut ullamcorper erat.'),
-        html.P('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam quam est, ultrices egestas sapien a, interdum tempus arcu. Sed sed porta turpis. Praesent malesuada, augue vulputate commodo commodo, felis dui fermentum odio, a maximus neque urna eget purus. Donec tempus auctor molestie. Sed varius mattis magna et iaculis. Donec pharetra orci vitae urna rutrum, non vulputate felis eleifend. Sed tincidunt volutpat elementum. Morbi fermentum vehicula sem ut volutpat. Phasellus blandit tortor ante, eleifend vulputate libero accumsan sed. Aenean a mattis magna. Nam vehicula non odio sed vulputate. Nullam malesuada neque vulputate, tristique quam non, fermentum nunc. Praesent feugiat, metus non congue semper, ante lectus feugiat orci, a interdum lacus ligula eget lectus. Sed quis tellus egestas, tristique leo et, interdum sapien. Curabitur rutrum mi vitae ligula pulvinar fringilla. Aenean cursus volutpat sem ut elementum. Morbi sed arcu in lorem ullamcorper volutpat a vel orci. Donec in tincidunt leo. Integer tempus efficitur nisi vel porttitor. Donec vel fringilla quam, ac sollicitudin diam. Nam vel ante lorem. Vivamus aliquet purus in magna semper, quis tempor orci volutpat. Cras neque diam, lobortis ac sem vitae, pharetra ultricies nisi. Praesent ut ullamcorper erat.'),
     ]
 )

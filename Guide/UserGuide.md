@@ -1,6 +1,44 @@
-# UserGuide : 
+# DashBoard-Energy : 
+[![Benoit Profile](https://img.shields.io/badge/Made%20with-Benoit%20Marchadier-brightgreen)](https://github.com/bebe0106)
+[![Antoine Profile](https://img.shields.io/badge/Made%20with-Antoine%20Aubert-blue)](https://github.com/Aubert-Antoine)
 
-### Key Features: 
+# DashBoard Energy User Guide : 
+This is the user guide page of our app : DashBoard Energy.
+
+Please find below the different subsections of this page :
+
+1. [Introduction](#introduction)
+2. [Data](#data)
+3. [Data visualisation](#data-visualisation)
+4. [Pages](#pages)
+5. [How to Guide](#how-to-guide)    
+6. [Conclusion](#conclusion)
+
+## Introduction 
+This app is a dashboard that allows you to visualize the evolution of the energy consumption of the world's countries over the last 20 years. 
+This project is part of the Data Science course of the Master 2 of the ESIEE program, in the [data visualisation unit](https://perso.esiee.fr/~courivad/DSIA4101A/).
+
+## Data
+The data used in this project comes from 4 different sources, available upper in this page. They are all in open source and free to use.
+The main file is **kaggle : sustainable energy** and it is enhanced by the other files. One contain the HDI, and the other the continent and sub-regions of each country. 
+Finally, the GeoJSON file is used to draw the map. The goal is to get all the data needed to show interesting graphs, and deduct some relevant information from them.
+
+The data are cleaned and processed in the [process_data.py]() file. The data are then stored in the [dataset]() folder.
+
+Data set *1.* : [kaggle : sustainable energy](https://www.kaggle.com/datasets/anshtanwar/global-data-on-sustainable-energy) (500ko)
+Data set *2.* : [Our world in data : human development index](https://ourworldindata.org/human-development-index) (146ko)
+Data set *3.* : [Country to continent](https://www.kaggle.com/datasets/statchaitya/country-to-continent/data) (16ko)
+Geo.JSON *4.* : [GeoJSON](https://geojson-maps.ash.ms/) ??? (1.5Mo)
+
+#### Description of the data set *1.* :
+> Uncover this comprehensive dataset showcasing sustainable energy indicators and other useful factors 
+> across all countries from 2000 to 2020. Dive into vital aspects such as electricity access, renewable energy, 
+> carbon emissions, energy intensity, Financial flows, and economic growth. Compare nations, track progress 
+> towards Sustainable Development Goal 7, and gain profound insights into global energy consumption patterns 
+> over time.
+
+
+#### Key Features of the data set *1.* : 
 * Entity: The name of the country or region for which the data is reported.
 * Year: The year for which the data is reported, ranging from 2000 to 2020.
 * Access to electricity (% of population): The percentage of population with access to electricity.
@@ -23,9 +61,24 @@
 * Latitude: Latitude of the country's centroid in decimal degrees.
 * Longitude: Longitude of the country's centroid in decimal degrees.
 
-### Description :
-> Uncover this comprehensive dataset showcasing sustainable energy indicators and other useful factors 
-> across all countries from 2000 to 2020. Dive into vital aspects such as electricity access, renewable energy, 
-> carbon emissions, energy intensity, Financial flows, and economic growth. Compare nations, track progress 
-> towards Sustainable Development Goal 7, and gain profound insights into global energy consumption patterns 
-> over time.
+
+## Data visualisation
+The web application is served by a Dash server. It is a tool to display [plotly](https://plotly/python.com) graphs. 
+The principle is to chose thanks to 'Multi-Select Dropdown' the area you would like to display. 
+Then all the graph should be updated, for the selection. 
+
+## Pages
+The app is composed of 3 pages :
+- **Home** : This page is the first page of the app. It contains a short description of the app and a link to the data source.
+- **Analytics** : This page contains the graphs of the app. It is composed of N graphs : 
+    - xxx
+    - xxx
+    - xxx
+- **User Guide** : This current page. It contains a description of the app and a guide to use it.
+
+## How to Guide
+
+...
+
+## Conclusion
+...

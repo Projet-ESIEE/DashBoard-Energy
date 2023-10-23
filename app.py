@@ -13,11 +13,8 @@ app.layout = html.Div([
         ) for page in dash.page_registry.values()
     ]),
     dash.page_container,
-    # footer.footer(),
-    html.Footer(
-        className="footer",
-        children=html.P("footer"))
-    ], style={"margin-bottom": "100px"}
+    footer.footer(),
+    ]
 )
 
 

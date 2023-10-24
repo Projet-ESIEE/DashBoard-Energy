@@ -1,9 +1,6 @@
 import dash
 import pandas as pd
-import geopandas as gpd
 import os
-import seaborn as sn
-import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
@@ -21,10 +18,10 @@ area_options = {
     'Entity': df_energy['Entity'].unique()
 }
 
-def line_plot_missing_values(df_energy: pd.DataFrame = df_energy) -> go.Figure:
+
+def line_plot_missing_values() -> go.Figure:
     """
     The line_plot_missing_values function plot the number of na by years
-    :param df_energy:
     :return:
     """
     missing_values_by_year = df_energy.groupby("Year").apply(lambda x: x.isna().sum().sum())
@@ -43,10 +40,9 @@ def line_plot_missing_values(df_energy: pd.DataFrame = df_energy) -> go.Figure:
     return fig_na
 
 
-def bar_graph_missing_values(df_energy: pd.DataFrame = df_energy) -> go.Figure:
+def bar_graph_missing_values() -> go.Figure:
     """
 
-    :param df_energy:
     :return:
     """
     serie_na = df_energy.isnull().sum().sort_values(ascending=False)
@@ -68,10 +64,62 @@ def bar_graph_missing_values(df_energy: pd.DataFrame = df_energy) -> go.Figure:
     return fig_null_data
 
 
+layout = html.Div(
+    className="content",
+    children=[
+        html.H1('This is our Analytics page'),
+        dcc.Graph(figure=bar_graph_missing_values()),
+        html.P("As we can see there is a lot of missing values..."),
+        dcc.Graph(figure=line_plot_missing_values()),
+        html.P("But this is not caused by the age"),
+        html.Br(),
+        html.P("Let's have a deeper look to missing data"),
+        html.H3("Select an area"),
+
+        html.Label('Multi-Select Dropdown Continent'),
+        html.Br(),
+        dcc.Dropdown(
+            list(area_options.keys()),
+            id='area_type-drop',
+            multi=False,
+            value="Continent",
+            style={'width': '48%', 'display': 'inline-block'}
+        ),
+        dcc.Dropdown(
+            id='area_name-drop',
+            style={'width': '48%', 'display': 'inline-block'}),
+        dcc.Graph(id="heatmap_missing_values"),
+        html.Br(),
+        dcc.Graph(id="histo_hdi")
+
+
+
+    ]
+)
+
+
+@callback(
+    Output('area_name-drop', 'options'),
+    Input('area_type-drop', 'value'))
+def set_cities_options(selected_country):
+    return [{'label': i, 'value': i} for i in area_options[selected_country]]
+
+
+@callback(
+    Output('area_name-drop', 'value'),
+    Input('area_name-drop', 'options'))
+def set_cities_value(available_options):
+    return available_options[0]['value']
+
+
+################################
+################################
+################################
+
 @callback(Output(component_id="heatmap_missing_values", component_property="figure"),
-          Input(component_id="select_contient", component_property="str"),
-          )
-def heatmap_missing_values(df_heatmap: pd.DataFrame = df_energy, area_type: str = "Continent", area_name: str = "Asia") -> go.Figure:
+          Input(component_id="area_type-drop", component_property="value"),
+          Input(component_id="area_name-drop", component_property="value"))
+def heatmap_missing_values(area_type: str = "Continent", area_name: str = "Europe") -> go.Figure:
     """
     This function creat a complexe multi-figure within a heatmap of missing values for the given area_name for all features and an indicator trace.
     :param df_heatmap: The data frame to analyse
@@ -87,7 +135,7 @@ def heatmap_missing_values(df_heatmap: pd.DataFrame = df_energy, area_type: str 
     col = df_energy.columns.tolist()
     for x in ['Year', 'Entity', 'Continent', 'Region', 'iso3']: col.remove(x)
 
-    df_heat = df_heatmap.query(f"{area_type} == '{area_name}'")[col]  # make the df with for the given area_name
+    df_heat = df_energy.query(f"{area_type} == '{area_name}'")[col]  # make the df with for the given area_name
     df_heat_na = df_heat.isna()
     df_heat_na.replace({True: 1, False: 0},
                        inplace=True)  # We change the True to 1 because plotly can not interpret them
@@ -95,10 +143,10 @@ def heatmap_missing_values(df_heatmap: pd.DataFrame = df_energy, area_type: str 
     # compute the values for the indicator
     NB_OF_NAN = df_heat_na.sum().sum()
     NB_OF_NAN_GLOBAL = df_energy.isna().sum().sum()
-    NB_MEAN_NAN = (NB_OF_NAN_GLOBAL / len(df_heatmap[area_type].unique()))
+    NB_MEAN_NAN = (NB_OF_NAN_GLOBAL / len(df_energy[area_type].unique()))
     # compare the nb of nan for the given area_name to the mean of nan of other area_type
 
-    df_heat_na['Year'] = df_heatmap['Year']  # add the year column to the df
+    df_heat_na['Year'] = df_energy['Year']  # add the year column to the df
     transposed_df = df_heat_na.groupby('Year').sum().T
 
     # testing after the upper calculation to be sure that the nb of missing val and shape is plausible
@@ -158,7 +206,7 @@ def heatmap_missing_values(df_heatmap: pd.DataFrame = df_energy, area_type: str 
         title_text="Observation of missing values for : {}".format(area_name),
         title_font_size=24,  # Increase title font size
         title_x=0.5,  # Center the title
-        # height=900,  # Set the height of the figure in pixels
+        height=800,  # Set the height of the figure in pixels
         # width=1000,  # Set the width of the figure in pixels
         font=dict(family='Arial', size=12),  # Customize font family and size for the whole figure
         # margin=dict(t=80, l=50, r=50, b=50),  # Add margin for better layout spacing
@@ -167,37 +215,36 @@ def heatmap_missing_values(df_heatmap: pd.DataFrame = df_energy, area_type: str 
     return heatmap
 
 
-layout = html.Div(
-    className="content",
-    children=[
-        html.H1('This is our Analytics page'),
-        dcc.Graph(figure=bar_graph_missing_values()),
-        html.P("As we can see there is a lot of missing values..."),
-        dcc.Graph(figure=line_plot_missing_values()),
-        html.P("But this is not caused by the age"),
-        html.Br(),
-        html.P("Let's have a deeper look to missing data"),
-        html.H3("Select an area"),
-        html.Label('Multi-Select Dropdown Continent'),
-        dcc.Dropdown(
-                list(area_options.keys()),
-                'Continent',
-                id='Continent-drop',
-            ),
+@callback(Output(component_id="histo_hdi", component_property="figure"),
+          Input(component_id="area_type-drop", component_property="value"),
+          Input(component_id="area_name-drop", component_property="value"), )
+def histo_hdi(area_type: str, area_name: str, reference_year: int = 2020) -> go.Figure:
+    """
+    histo_HDI make a histogram with the frequency of HDI for a given area type. The slider change the year of observation. The area name is the current country observed.
+    :param reference_year:
+    :param area_type:
+    :param area_name:
+    :return:
+    """
+    # Selection feature needed
+    df_histo = pd.DataFrame(data=df_energy, columns=['Year', 'Entity', 'Continent', 'Region', 'Human Development Index'])
 
-        html.Hr(),
-        dcc.RadioItems(id='cities-radio'),
+    # Filtering by the area_name and the year + the reference year for this same are_name
+    df_histo_filtered = df_histo.query(f"{area_type} == '{area_name}'")
 
-        html.Hr(),
+    # Creation of the feature 'reference' that is a boolean.
+    df_histo_filtered['reference'] = df_histo_filtered['Year'] == reference_year
 
-        html.Div(id='display-selected-values'),
+    histo = px.histogram(df_histo_filtered,
+                         x="Human Development Index",
+                         marginal="box",  # ["rug", "box", "violin"]
+                         color="reference",
+                         title='Histogram Human Development Index per year with 2020 as reference',
+                         pattern_shape="reference",
+                         opacity=1,
+                         template=THEME,
+                         text_auto=True,
+                         animation_frame="Year",
+                         )
 
-        dcc.Dropdown(['Europe', 'Asia'],
-                     [],
-                     multi=False,
-                     id="select_continent",
-                     placeholder="Select a city",),
-
-        dcc.Graph(figure=heatmap_missing_values()),
-    ]
-)
+    return histo

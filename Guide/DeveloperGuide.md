@@ -5,11 +5,11 @@
 ## Project structure : 
 ```shell
 - assets/
-  |-- style.css
+  |-- style.txt
 - dataset
 - Guide
 - pages
-   |-- analytics.py
+   |-- analytics_missing_values.py
    |-- home.py
    |-- archive.py
   - components

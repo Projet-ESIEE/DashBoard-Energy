@@ -15,7 +15,7 @@ THEME = "plotly_dark"
 area_options = {
     'Continent': df_energy['Continent'].unique(),
     'Region': df_energy['Region'].unique(),
-    'Entity': df_energy['Entity'].unique()
+    'Entity': df_energy['Country'].unique()
 }
 
 

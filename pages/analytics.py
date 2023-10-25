@@ -133,7 +133,7 @@ def heatmap_missing_values(area_type: str = "Continent", area_name: str = "Europ
     ###############
     # The set of var to observe except the one used on other axis
     col = df_energy.columns.tolist()
-    for x in ['Year', 'Entity', 'Continent', 'Region', 'iso3']: col.remove(x)
+    for x in ['Year', 'Country', 'Continent', 'Region', 'iso3']: col.remove(x)
 
     df_heat = df_energy.query(f"{area_type} == '{area_name}'")[col]  # make the df with for the given area_name
     df_heat_na = df_heat.isna()
@@ -227,7 +227,7 @@ def histo_hdi(area_type: str, area_name: str, reference_year: int = 2020) -> go.
     :return:
     """
     # Selection feature needed
-    df_histo = pd.DataFrame(data=df_energy, columns=['Year', 'Entity', 'Continent', 'Region', 'Human Development Index'])
+    df_histo = pd.DataFrame(data=df_energy, columns=['Year', 'Country', 'Continent', 'Region', 'Human Development Index'])
 
     # Filtering by the area_name and the year + the reference year for this same are_name
     df_histo_filtered = df_histo.query(f"{area_type} == '{area_name}'")

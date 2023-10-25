@@ -160,13 +160,12 @@ def heatmap_missing_values(area_type: str = "Continent", area_name: str = "Europ
     assert transposed_df.shape[1] == len(
         df_energy['Year'].unique().tolist()), "<-- The number of rows is not the same -->"
 
-    ###############
-    ## The subplot
-    ###############
     heatmap = make_subplots(
-        rows=1, cols=2,  # 2 col bcs 2 graph
+        rows=2, cols=2,  # 2 col bcs 2 graph
         column_widths=[0.9, 0.2],
-        specs=[[{"type": "xy"}, {"type": "domain"}]],
+        row_heights=[0.5, 0.5],
+        specs=[[{"type": "xy"}, {"type": "domain"}],
+               [{"type": "xy"}, {"type": "domain"}]],
         subplot_titles=("Heatmap des valeurs manquantes par année et par variable", "")
     )
 
@@ -204,13 +203,46 @@ def heatmap_missing_values(area_type: str = "Continent", area_name: str = "Europ
         row=1, col=2
     )
 
+    ##### The heatmap
+    heatmap.add_trace(
+        go.Heatmap(
+            z=transposed_df,
+            x=df_energy['Year'].unique().tolist(),
+            y=col,
+
+            # Styling
+            colorscale='Viridis',
+            colorbar=dict(
+                title="nombre",
+                titleside="top"
+            )
+        ),
+        # placement of the graph in 1st position
+        row=2, col=1
+    )
+
+    ###### The indicator
+    heatmap.add_trace(
+        go.Indicator(
+            mode="number+delta",  # 'delta' mean the % btw the value and a ref
+            value=NB_OF_NAN,  # nb of nan for the current country looked
+            delta={'reference': int(NB_MEAN_NAN), 'relative': True, 'valueformat': '.2f', "suffix": "%"},
+            # styling
+            title={"text": f"NN of nan for {area_name}<br>"
+                           "<span style='font-size:0.8em;color:gray'>"
+                           f"compare to the mean of {area_type}</span>"
+                   }
+        ),
+        # placement of the graph in 2nd position
+        row=2, col=2
+    )
     ##### styling
     heatmap.update_layout(
         template=THEME,  # just a default theme
         title_text="Observation of missing values for : {}".format(area_name),
         title_font_size=24,  # Increase title font size
         title_x=0.5,  # Center the title
-        height=800,  # Set the height of the figure in pixels
+        height=900,  # Set the height of the figure in pixels
         # width=1000,  # Set the width of the figure in pixels
         font=dict(family='Arial', size=12),  # Customize font family and size for the whole figure
         # margin=dict(t=80, l=50, r=50, b=50),  # Add margin for better layout spacing

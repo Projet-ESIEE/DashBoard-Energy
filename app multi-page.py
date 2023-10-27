@@ -11,11 +11,12 @@ from dash_bootstrap_templates import ThemeSwitchAIO
 #     themes=[url_theme2, url_theme1],
 #     icons={"left": "fa fa-sun", "right": "fa fa-moon"},
 # )
-
+external_stylesheets1 = dbc.themes.CYBORG
+external_stylesheets2 = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = dash.Dash(
     __name__,
     use_pages=True,
-    external_stylesheets=[dbc.themes.CYBORG],
+    external_stylesheets=[external_stylesheets1],
 )
 
 

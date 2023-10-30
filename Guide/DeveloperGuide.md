@@ -5,7 +5,7 @@
 ## Project structure : 
 ```shell
 - assets/
-  |-- style.txt
+  |-- style.css
 - dataset
 - Guide
 - pages

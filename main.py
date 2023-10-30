@@ -46,7 +46,7 @@ navbar = dbc.NavbarSimple([
         nav=True,
         label="Guides",
     )],
-    brand="Multi Page App Plugin Demo",
+    brand="Dash board - Energy",
     color="primary",
     dark=True,
     className="mb-2",

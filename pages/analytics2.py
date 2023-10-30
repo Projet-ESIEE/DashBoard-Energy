@@ -8,7 +8,7 @@ from dash import html, dcc, callback, Input, Output
 
 dash.register_page(
     __name__,
-    name="Analitics2",
+    name="Map & Histogram",
     analitic=True,
 )
 THEME = "plotly_dark"

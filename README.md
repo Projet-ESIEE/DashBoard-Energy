@@ -5,9 +5,7 @@
 
 <u>**[GitHub project address](https://github.com/Projet-ESIEE/DashBoard-Energy)**</u>
 
-# DashBoard Energy User Guide : 
-This is the user guide page of our app : DashBoard Energy.
-
+# DashBoard Energy README :
 Please find below the different subsections of this page :
 
 1. [Introduction](#introduction)
@@ -22,16 +20,15 @@ This app is a dashboard that allows you to visualize the evolution of the energy
 This project is part of the Data Science course of the Master 2 of the ESIEE program, in the [data visualisation unit](https://perso.esiee.fr/~courivad/DSIA4101A/).
 
 ## Data
-The data used in this project comes from 4 different sources, available upper in this page. They are all in open source and free to use.
+The data used in this project comes from 3 different sources, available bellow in this page. They are all in open source and free to use.
 The main file is **kaggle : sustainable energy** and it is enhanced by the other files. One contain the HDI, and the other the continent and sub-regions of each country. 
-Finally, the GeoJSON file is used to draw the map. The goal is to get all the data needed to show interesting graphs, and deduct some relevant information from them.
+The goal is to get all the data needed to show interesting graphs, and deduct some relevant information from them.
 
 The data are cleaned and processed in the [process_data.py]() file. The data are then stored in the [dataset]() folder.
 
 Data set *1.* : [kaggle : sustainable energy](https://www.kaggle.com/datasets/anshtanwar/global-data-on-sustainable-energy) (500ko)
 Data set *2.* : [Our world in data : human development index](https://ourworldindata.org/human-development-index) (146ko)
 Data set *3.* : [Country to continent](https://www.kaggle.com/datasets/statchaitya/country-to-continent/data) (16ko)
-Geo.JSON *4.* : [GeoJSON](https://geojson-maps.ash.ms/) ??? (1.5Mo)
 
 #### Description of the data set *1.* :
 > Uncover this comprehensive dataset showcasing sustainable energy indicators and other useful factors 
@@ -71,10 +68,11 @@ The principle is to chose thanks to 'Multi-Select Dropdown' the area you would l
 Then all the graph should be updated, for the selection. 
 
 ## Pages
-The app is composed of 3 pages :
-- **Home** : This page is the first page of the app. It contains a short description of the app and a link to the data source.
-- **Analytics** : This page contains the graphs of the app. It is composed of N graphs : 
-    - xxx
-    - xxx
-    - xxx
-- **User Guide** : This current page. It contains a description of the app and a guide to use it.
+The app is composed of 5 pages :
+- **Home** : This current page.
+- **Missing values analytics** : analyse the missing values of the dataset and visualisez the global trend via a few plots. 
+- **Maps & histogram analytics** : 
+- **User Guide** : which lets you deploy and use your dashboard on another machine
+- **Report** : which highlights the main conclusions drawn from the data.
+- **Developer Guide** : which allows you to understand the architecture of the code and modify or extend it.
+

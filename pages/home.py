@@ -20,7 +20,7 @@ MARKDOWN = """
                 2. [Data](#data)
                 3. [Data visualisation](#data-visualisation)
                 4. [Pages](#pages)
-                5. [How to Guide](#how-to-guide)    
+                5. [How to guide](#how-to-guide)    
                 6. [Conclusion](#conclusion)
                 
                 ## Introduction 
@@ -80,9 +80,9 @@ MARKDOWN = """
                 - **Home** : This current page.
                 - **Missing values analytics** : analyse the missing values of the dataset and visualisez the global trend via a few plots. 
                 - **Maps & histogram analytics** : 
-                - **User Guide** : which lets you deploy and use your dashboard on another machine
+                - **User guide** : which lets you deploy and use your dashboard on another machine
                 - **Report** : which highlights the main conclusions drawn from the data.
-                - **Developer Guide** : which allows you to understand the architecture of the code and modify or extend it.
+                - **Developer guide** : which allows you to understand the architecture of the code and modify or extend it.
                 """
 
 layout = html.Div(

@@ -3,8 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/DashBoard-Energy.iml" filepath="$PROJECT_DIR$/.idea/DashBoard-Energy.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../OUAP_proba/.idea/OUAP_proba.iml" filepath="$PROJECT_DIR$/../OUAP_proba/.idea/OUAP_proba.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../dash-multi-page-app-demos-main/multi_page_layout_functions/.idea/multi_page_layout_functions.iml" filepath="$PROJECT_DIR$/../dash-multi-page-app-demos-main/multi_page_layout_functions/.idea/multi_page_layout_functions.iml" />
     </modules>
   </component>
 </project>

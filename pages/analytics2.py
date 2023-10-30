@@ -9,7 +9,7 @@ from dash import html, dcc, callback, Input, Output
 dash.register_page(
     __name__,
     name="Map & Histogram",
-    analitic=True,
+    analytics=True,
 )
 THEME = "plotly_dark"
 path_energy = os.path.join("dataset", "energy-cleaned-dataset.csv")

@@ -1,9 +1,4 @@
 import dash
-import pandas as pd
-import os
-import plotly.express as px
-import plotly.graph_objects as go
-from plotly.subplots import make_subplots
 from dash import html, dcc, callback, Input, Output
 
 dash.register_page(

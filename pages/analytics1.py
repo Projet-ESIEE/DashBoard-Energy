@@ -9,8 +9,9 @@ from dash import html, dcc, callback, Input, Output
 dash.register_page(
     __name__,
     name="Missing values",
-    analitic=True,
-    order=2)
+    order=2,
+    analytic=True,
+)
 
 path_energy = os.path.join("dataset", "energy-cleaned-dataset.csv")
 df_energy = pd.read_csv(path_energy)

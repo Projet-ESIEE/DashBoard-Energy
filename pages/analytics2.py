@@ -9,7 +9,7 @@ from dash import html, dcc, callback, Input, Output
 dash.register_page(
     __name__,
     name="Map & Histogram",
-    analitic=True,
+    analytic=True,
 )
 THEME = "plotly_dark"
 path_energy = os.path.join("dataset", "energy-cleaned-dataset.csv")
@@ -23,9 +23,10 @@ df_histo = pd.DataFrame(df_energy, columns=["Country", "Continent", "Year",
                                             "Electricity from Nuclear (TWh)",
                                             "Electricity from Renewables (TWh)"])
 
-df_histo = pd.melt(df_histo, id_vars=["Country", "Continent", "Year"], value_vars=["Electricity from Fossil Fuels (TWh)",
-                                                                                   "Electricity from Nuclear (TWh)",
-                                                                                   "Electricity from Renewables (TWh)"],
+df_histo = pd.melt(df_histo, id_vars=["Country", "Continent", "Year"],
+                   value_vars=["Electricity from Fossil Fuels (TWh)",
+                               "Electricity from Nuclear (TWh)",
+                               "Electricity from Renewables (TWh)"],
                    var_name="Electricity mode", value_name="Electricity (TWh)")
 
 # Renommer les catégories "Electricity from fossil fuels (TWh)", "Electricity from nuclear (TWh)", "Electricity from
@@ -58,15 +59,18 @@ def make_map(color="Total electricity", scope="world", year = "2020"):
 layout = html.Div([
     html.Div([
         dcc.Dropdown(
-            df_energy.keys(),
+            ["Electricity from Fossil Fuels (TWh)",
+             "Electricity from Nuclear (TWh)",
+             "Electricity from Renewables (TWh)",
+             "Total electricity"],
             "Total electricity",
-            id='columns dropdown',
+            id='columns_dropdown',
         ),
     ], style={'width': '40%', 'display': 'inline-block', 'padding': '0 100 200 300'}),
     html.Div([
         dcc.Graph(
             id='map',
-            figure=make_map(),
+            # figure=make_map(),
             hoverData={'points': [{'location': 'Japan'}]}
         )
     ], style={'width': '65%', 'display': 'inline-block', 'padding': '0 20'}),
@@ -83,16 +87,42 @@ layout = html.Div([
     Output("pie", "figure"),
     [Input("map", "hoverData")]
 )
-def pie(hoverData):
+def make_pie(hoverData):
     pays = hoverData['points'][0]["location"]
     df_pie = df_histo.query("Country=='" + pays + "'")
     fig = px.pie(
         df_pie,
+        title=pays,
         names="Electricity mode",
         values="Electricity (TWh)",
-        template=THEME
+        template=THEME,
     )
     fig.update_layout(
         margin={'l': 20, 'b': 30, 'r': 10, 't': 10}
     )
+    return fig
+
+
+@callback(Output("map", "figure"),
+          [Input("columns_dropdown", "value")])
+def make_map(value, scope="world", year="2020"):
+    column = value
+    df_map = df_energy.query("Year == " + year)
+    fig = px.choropleth(
+        df_map,
+        locations="Country",
+        # color=np.log(df_energy[color]),
+        color=column,
+        hover_name="Country",
+        hover_data=[column],
+        locationmode="country names",
+        # range_color=[0, np.log(max(df_energy[color]))],
+        range_color=[min(df_map[column]), max(df_map[column])],
+        template=THEME,
+        scope=scope,
+        color_continuous_scale=px.colors.sequential.thermal_r,
+    )
+    fig.update_layout(margin=dict(l=40, r=0, b=40, t=10, pad=0), paper_bgcolor="black",
+                      hovermode='closest',
+                      coloraxis_colorbar=dict(title=column, len=0.8, orientation="h", y=0))
     return fig

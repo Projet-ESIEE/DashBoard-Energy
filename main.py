@@ -31,7 +31,7 @@ navbar = dbc.NavbarSimple([
         [
             dbc.DropdownMenuItem(page["name"], href=page["path"])
             for page in dash.page_registry.values()
-            if page.get("analitic")
+            if page.get("analytic")
         ],
         nav=True,
         label="Analitics",

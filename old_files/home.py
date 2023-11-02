@@ -8,10 +8,10 @@ from dash import html, dcc, callback, Input, Output
 
 dash.register_page(
     __name__,
-    name="Analitics2",
+    name="Home",
     analitic=True,
 )
-THEME = "plotly_dark"
+
 path_energy = os.path.join("dataset", "energy-cleaned-dataset.csv")
 df_energy = pd.read_csv(path_energy)
 df_energy.insert(4, "Total electricity", np.sum([df_energy["Electricity from Fossil Fuels (TWh)"],
@@ -23,9 +23,10 @@ df_histo = pd.DataFrame(df_energy, columns=["Country", "Continent", "Year",
                                             "Electricity from Nuclear (TWh)",
                                             "Electricity from Renewables (TWh)"])
 
-df_histo = pd.melt(df_histo, id_vars=["Country", "Continent", "Year"], value_vars=["Electricity from Fossil Fuels (TWh)",
-                                                                                   "Electricity from Nuclear (TWh)",
-                                                                                   "Electricity from Renewables (TWh)"],
+df_histo = pd.melt(df_histo, id_vars=["Country", "Continent", "Year"],
+                   value_vars=["Electricity from Fossil Fuels (TWh)",
+                               "Electricity from Nuclear (TWh)",
+                               "Electricity from Renewables (TWh)"],
                    var_name="Electricity mode", value_name="Electricity (TWh)")
 
 # Renommer les catégories "Electricity from fossil fuels (TWh)", "Electricity from nuclear (TWh)", "Electricity from
@@ -33,8 +34,9 @@ df_histo = pd.melt(df_histo, id_vars=["Country", "Continent", "Year"], value_var
 df_histo["Electricity mode"] = df_histo["Electricity mode"].str.replace("Electricity from ", "")
 df_histo["Electricity mode"] = df_histo["Electricity mode"].str.replace(" (TWh)", "")
 
-def make_map(color="Total electricity", scope="world", year = "2020"):
-    df_map = df_energy.query("Year == "+year)
+
+def make_map(color="Total electricity", scope="world", year="2020"):
+    df_map = df_energy.query("Year == " + year)
     fig = px.choropleth(
         df_energy,
         locations="Country",
@@ -45,17 +47,32 @@ def make_map(color="Total electricity", scope="world", year = "2020"):
         locationmode="country names",
         # range_color=[0, np.log(max(df_energy[color]))],
         range_color=[min(df_energy[color]), max(df_energy[color])],
-        template=THEME,
+        # template=THEME,
         scope=scope,
         color_continuous_scale=px.colors.sequential.thermal_r,
     )
-    fig.update_layout(margin=dict(l=40, r=0, b=40, t=10, pad=0), paper_bgcolor="black",
+    fig.update_layout(margin=dict(l=40, r=0, b=40, t=10, pad=0),
+                      paper_bgcolor="black",
                       hovermode='closest',
-                      coloraxis_colorbar=dict(title=color, len=0.8, orientation="h", y=0))
+                      coloraxis_colorbar=dict(title=color, len=0.8, orientation="h", y=0),
+                      geo=dict(bgcolor='rgba(0,0,0,0)'))
     return fig
 
 
-layout = html.Div([
+def init_pie():
+    df_pie = df_histo.query("Country=='France'")
+    fig = px.pie(
+        df_pie,
+        names="Electricity mode",
+        values="Electricity (TWh)",
+    )
+    fig.update_layout(
+        plot_bgcolor='rgba(0,0,0,0)'
+    )
+    return fig
+
+
+layout2 = html.Div([
     html.Div([
         dcc.Dropdown(
             df_energy.keys(),
@@ -75,8 +92,37 @@ layout = html.Div([
     ], style={'display': 'inline-block', 'width': '25%'}),
 ])
 
-
-
+layout = html.Div([
+    html.Div([
+        html.H1("Energy Dashboard",
+                className="header_title",
+                )
+    ],
+        className="header",
+    ),
+    html.Div([
+        html.Div([
+            dcc.Graph(
+                id='map',
+                figure=make_map(),
+                hoverData={'points': [{'location': 'Japan'}]}
+            )],
+            className="div_map_bg")
+    ],
+        className="div_map",
+    ),
+    html.Div([
+        html.Div([
+            dcc.Graph(id='pie', figure=init_pie())
+        ], className="div_pie1_bg")
+    ], className="div_pie1"),
+    html.Div([
+        html.Div([
+            dcc.Graph(id='pie2', figure=init_pie())
+        ], className="div_pie2_bg")
+    ], className="div_pie2")
+], className="screen",
+)
 
 
 @callback(
@@ -90,9 +136,5 @@ def pie(hoverData):
         df_pie,
         names="Electricity mode",
         values="Electricity (TWh)",
-        template=THEME
-    )
-    fig.update_layout(
-        margin={'l': 20, 'b': 30, 'r': 10, 't': 10}
     )
     return fig

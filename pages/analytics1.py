@@ -50,6 +50,12 @@ def get_na_info(area_type: str, area_name: str):
 
     return NB_OF_NAN, NB_OF_NAN_GLOBAL, NB_MEAN_NAN
 
+    fig_null_data = go.Figure(go.Bar(
+        x=serie_na.index,
+        y=serie_na,
+        text=serie_na,
+        textposition='auto'
+    ))
 
 ##################################
 layout = html.Div(
@@ -208,73 +214,10 @@ def heatmap_missing_values(area_type: str, area_name: str) -> go.Figure:
     heatmap.update_layout(
         height=430,
     )
+
     return heatmap
 
 
-"""
-['aggrnyl', 'agsunset', 'algae', 'amp', 'armyrose', 'balance',
-'blackbody', 'bluered', 'blues', 'blugrn', 'bluyl', 'brbg',
-'brwnyl', 'bugn', 'bupu', 'burg', 'burgyl', 'cividis', 'curl',
-'darkmint', 'deep', 'delta', 'dense', 'earth', 'edge', 'electric',
-'emrld', 'fall', 'geyser', 'gnbu', 'gray', 'greens', 'greys',
-'haline', 'hot', 'hsv', 'ice', 'icefire', 'inferno', 'jet',
-'magenta', 'magma', 'matter', 'mint', 'mrybm', 'mygbm', 'oranges',
-'orrd', 'oryel', 'oxy', 'peach', 'phase', 'picnic', 'pinkyl',
-'piyg', 'plasma', 'plotly3', 'portland', 'prgn', 'pubu', 'pubugn',
-'puor', 'purd', 'purp', 'purples', 'purpor', 'rainbow', 'rdbu',
-'rdgy', 'rdpu', 'rdylbu', 'rdylgn', 'redor', 'reds', 'solar',
-'spectral', 'speed', 'sunset', 'sunsetdark', 'teal', 'tealgrn',
-'tealrose', 'tempo', 'temps', 'thermal', 'tropic', 'turbid',
-'turbo', 'twilight', 'viridis', 'ylgn', 'ylgnbu', 'ylorbr',
-'ylorrd'].
-"""
-
-
-##################################
-#   <-- line_graph -->
-@callback(Output(component_id="lines_graph", component_property="figure"),
-          # Input(component_id="df_filter", component_property="data"),
-          Input(component_id="area_type-drop", component_property="value"),
-          Input(component_id="area_name-drop", component_property="value"))
-def lines_graph(area_type: str, area_name: str) -> go.Figure:
-    """
-
-    :return:
-    """
-    # Copiez le dataframe original pour travailler sur une copie
-    df_normalized = df_energy_query(area_type, area_name).copy()
-
-    # FIXME : replacer uniquement les 0
-    df_normalized.replace({np.nan: 1, 0: 1}, inplace=True)
-
-    # Sélectionnez les colonnes contenant des variables quantitatives à normaliser
-    cols_to_normalize = df_normalized.columns.difference(['Country', 'Year', 'Continent', 'Region', 'iso3'])
-    # Exclure les colonnes non numériques
-
-    # On teste s'il n'y a pas de valeur restante non numérique
-    df_normalized[cols_to_normalize].apply(lambda s: pd.to_numeric(s, errors='coerce').notnull().all())
-
-    # Créez un masque pour exclure les années autres que 2000
-    mask_2000 = (df_normalized['Year'] == 2000)
-    df_normalized_2000 = df_normalized[mask_2000][cols_to_normalize].reindex(df_normalized.index, method='pad')
-    # TODO : Ajouter le param, fill_na
-    """
-    Le but est d'avoir des nan en sortie pour pas tracer des lines à 0
-    Mais ne pas diviser par 0 ou nan
-    """
-    df_normalized[cols_to_normalize] = ((df_normalized[cols_to_normalize] - df_normalized_2000[cols_to_normalize]) / df_normalized_2000) * 100
-
-    df_line = df_normalized.query("Continent == 'Asia'")
-    df_line = df_line.groupby("Year").sum()
-    df_line.head()
-
-    fig = px.line(df_line, x=df_line.index, y=cols_to_normalize, markers=True, log_y=False)
-
-    return fig
-
-
-##################################
-#   <-- histo_hdi -->
 @callback(Output(component_id="histo_hdi", component_property="figure"),
           Input(component_id="area_type-drop", component_property="value"),
           Input(component_id="area_name-drop", component_property="value"), )

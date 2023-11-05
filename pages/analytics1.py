@@ -1,7 +1,6 @@
 import dash
 import pandas as pd
 import os
-import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
@@ -19,7 +18,7 @@ dash.register_page(
 path_energy = os.path.join("dataset", "energy-cleaned-dataset.csv")
 df_energy = pd.read_csv(path_energy)
 
-THEME = "plotly_dark"
+THEME = "plotly_white"
 
 area_options = {
     'Continent': df_energy['Continent'].unique(),
@@ -44,9 +43,8 @@ def df_energy_query(area_type: str, area_name: str) -> pd.DataFrame:
 
 # ADDDOC :
 #   - prb : La fonciton est apl plusieurs fois
-#   - est ce que mettre un call back pour quelle soit apl 1 seul fois par modif est bon ? mettre en global ? Output incompatible avec df ?
-
-
+#   - est ce que mettre un call back pour quelle soit apl 1 seul fois par modif est bon ? mettre en global ?
+#   Output incompatible avec df ? uniquement obj json ou str seriablisable
 # TODO : Est-ce que la fonction est assez utilisé ?
 
 
@@ -77,8 +75,9 @@ layout = html.Div(
             style={'width': '50%', 'display': 'inline-block'}
         ),
         dcc.Graph(id="indicator"),
-        dcc.Graph(id="heatmap_missing_values"),
+        # html.Hr(),
         dcc.Graph(id="lines_values_percentage"),
+        dcc.Graph(id="heatmap_missing_values"),
         dcc.Graph(id="histo_hdi"),
     ]
 )
@@ -207,20 +206,18 @@ def graph_heatmap_missing_values(area_type: str, area_name: str) -> go.Figure:
 
     heatmap = go.Figure()
     heatmap.add_trace(go.Heatmap(
-        z=transposed_df,
-        x=df_energy['Year'].unique().tolist(),
-        y=col,
-
+        z=transposed_df, x=df_energy['Year'].unique().tolist(), y=col,
         # Styling
         colorscale='aggrnyl',
         colorbar=dict(
-            title="nombre",
-            titleside="top"
+            title="",
+            titleside="right"
         ),
     ))
     heatmap.update_layout(
         height=430,
         template=THEME,
+        title=f"Number of missing values across years for countries of {area_name}"
     )
 
     return heatmap
@@ -230,7 +227,13 @@ def graph_heatmap_missing_values(area_type: str, area_name: str) -> go.Figure:
           Input(component_id="area_type-drop", component_property="value"),
           Input(component_id="area_name-drop", component_property="value"))
 def graph_lines_percentage(area_type: str, area_name: str) -> go.Figure:
-
+    """
+    Draw a lines chart with years on x-axis and values in % on y-axis. It shows the evolution of serval variables for
+    a given area_name. The evolution of pourcentage take year 2000 as reference.
+    :param area_type: ["Entity", "Continent", "Region", "iso3"]
+    :param area_name: ["France", "Europe", "Western Europe", "FRA", ...]
+    :return: go.Figure.line object, with a centered legend
+    """
     df_normalized = df_energy_query(area_type, area_name)
     df_normalized = df_normalized.replace(0, 1)
 
@@ -244,7 +247,8 @@ def graph_lines_percentage(area_type: str, area_name: str) -> go.Figure:
 
     # Créez un masque pour exclure les années autres que 2000
     mask_2000 = (df_normalized['Year'] == 2000)
-    df_normalized_2000 = df_normalized[mask_2000][cols_to_normalize].reindex(df_normalized.index, method='pad', fill_value=1)
+    df_normalized_2000 = df_normalized[mask_2000][cols_to_normalize].reindex(df_normalized.index, method='pad',
+                                                                             fill_value=1)
 
     df_normalized[cols_to_normalize] = ((df_normalized[cols_to_normalize] - df_normalized_2000[
         cols_to_normalize]) / df_normalized_2000) * 100
@@ -254,8 +258,8 @@ def graph_lines_percentage(area_type: str, area_name: str) -> go.Figure:
 
     lines = px.line(df_line, x=df_line.index, y=cols_to_normalize,
                     markers=True, log_y=False,
-                    title="Evolution in % with 2000 as reference",
                     template=THEME,
+                    log_x=True,  # to force to have more years display
                     )
 
     # Change the name of the variable in the légend. The goal is to have a better render and have shortened name
@@ -277,15 +281,15 @@ def graph_lines_percentage(area_type: str, area_name: str) -> go.Figure:
     # https://stackoverflow.com/questions/64371174/how-to-change-variable-label-names-for-the-legend-in-a-plotly-express-line-chart
 
     lines.update_layout(
-
         legend=dict(
             orientation="h",
-            entrywidth=70,
+            entrywidth=0,
             yanchor="bottom",
             y=-0.5,
-            xanchor="right",
-            x=1
+            xanchor="left",
+            x=0
         ),
+        title=f"Evolution in pourcentage of serval variables across years for countries of {area_name}"
     )
     return lines
 
@@ -314,7 +318,7 @@ def graph_histo_hdi(area_type: str, area_name: str, reference_year: int = 2020) 
                          x="Human Development Index",
                          marginal="box",  # ["rug", "box", "violin"]
                          color='reference',
-                         title=f"Histogram Human Development Index per year for {area_name}",
+                         title=f"Histogram Human Development Index per year for countries in {area_name}",
                          pattern_shape='reference',
                          opacity=1,
                          template=THEME,
@@ -324,7 +328,8 @@ def graph_histo_hdi(area_type: str, area_name: str, reference_year: int = 2020) 
 
     histo.update_layout(
         showlegend=False,
-        transition={'duration': 10000}
+        transition={'duration': 10000},
+        yaxis_title="Number of country",
     )
 
     return histo

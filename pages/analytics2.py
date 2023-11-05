@@ -1,4 +1,5 @@
-import dash, numpy as np
+import dash
+import numpy as np
 import pandas as pd
 import os
 import plotly.express as px

@@ -24,7 +24,7 @@ THEME = "plotly_dark"
 area_options = {
     'Continent': df_energy['Continent'].unique(),
     'Region': df_energy['Region'].unique(),
-    'Entity': df_energy['Country'].unique()
+    # 'Country': df_energy['Country'].unique(),
 }
 
 
@@ -227,12 +227,12 @@ def graph_heatmap_missing_values(area_type: str, area_name: str) -> go.Figure:
 
 
 @callback(Output(component_id="lines_values_percentage", component_property="figure"),
-          # Input(component_id="df_filter", component_property="data"),
           Input(component_id="area_type-drop", component_property="value"),
           Input(component_id="area_name-drop", component_property="value"))
 def graph_lines_percentage(area_type: str, area_name: str) -> go.Figure:
+
     df_normalized = df_energy_query(area_type, area_name)
-    df_normalized.replace({np.nan: 1, 0: 1}, inplace=True)
+    df_normalized = df_normalized.replace(0, 1)
 
     cols_to_normalize = df_normalized.columns.difference(
         ['Country', 'Year', 'Continent', 'Region', 'iso3', 'Access to Electricity (%)', 'Low-Carbon Electricity (%)',
@@ -244,7 +244,7 @@ def graph_lines_percentage(area_type: str, area_name: str) -> go.Figure:
 
     # Créez un masque pour exclure les années autres que 2000
     mask_2000 = (df_normalized['Year'] == 2000)
-    df_normalized_2000 = df_normalized[mask_2000][cols_to_normalize].reindex(df_normalized.index, method='pad')
+    df_normalized_2000 = df_normalized[mask_2000][cols_to_normalize].reindex(df_normalized.index, method='pad', fill_value=1)
 
     df_normalized[cols_to_normalize] = ((df_normalized[cols_to_normalize] - df_normalized_2000[
         cols_to_normalize]) / df_normalized_2000) * 100
@@ -274,6 +274,7 @@ def graph_lines_percentage(area_type: str, area_name: str) -> go.Figure:
     lines.for_each_trace(lambda t: t.update(name=legend_new[t.name]))
     # legendgroup = legend_new[t.name],
     # hovertemplate = t.hovertemplate.replace(t.name, legend_new[t.name])
+    # https://stackoverflow.com/questions/64371174/how-to-change-variable-label-names-for-the-legend-in-a-plotly-express-line-chart
 
     lines.update_layout(
 
@@ -306,14 +307,15 @@ def graph_histo_hdi(area_type: str, area_name: str, reference_year: int = 2020) 
     df_histo_filtered = df_histo[['Year', 'Country', 'Continent', 'Region', 'Human Development Index']]
 
     # Creation of the feature 'reference' that is a boolean.
-    df_histo_filtered['reference'] = df_histo_filtered['Year'] == reference_year
+    reference = pd.DataFrame({'reference': df_histo_filtered['Year'] == reference_year})  # chatGPT
+    df_histo_filtered = pd.concat([df_histo_filtered, reference], axis=1)
 
     histo = px.histogram(df_histo_filtered,
                          x="Human Development Index",
                          marginal="box",  # ["rug", "box", "violin"]
-                         color="reference",
+                         color='reference',
                          title=f"Histogram Human Development Index per year for {area_name}",
-                         pattern_shape="reference",
+                         pattern_shape='reference',
                          opacity=1,
                          template=THEME,
                          text_auto=True,
@@ -322,7 +324,7 @@ def graph_histo_hdi(area_type: str, area_name: str, reference_year: int = 2020) 
 
     histo.update_layout(
         showlegend=False,
-        transition={'duration': 100}
+        transition={'duration': 10000}
     )
 
     return histo

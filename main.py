@@ -52,7 +52,9 @@ navbar = dbc.NavbarSimple([
 )
 
 app.layout = dbc.Container(
-    [navbar, dash.page_container],
+    [dash.html.Link(rel='stylesheet', href='/assets/style.css'),
+        navbar,
+        dash.page_container],
     fluid=True,
 )
 

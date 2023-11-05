@@ -1,7 +1,7 @@
 import dash
-import pandas, numpy as np
 import pandas as pd
 import os
+import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
@@ -18,6 +18,7 @@ dash.register_page(
 #   <-- variable call and init -->
 path_energy = os.path.join("dataset", "energy-cleaned-dataset.csv")
 df_energy = pd.read_csv(path_energy)
+
 THEME = "plotly_dark"
 
 area_options = {
@@ -41,7 +42,10 @@ def df_energy_query(area_type: str, area_name: str) -> pd.DataFrame:
     return df_energy.query(f"{area_type} == '{area_name}'")
 
 
-def get_na_info(area_type: str, area_name: str):
+# TODO : Est-ce que la fonction est assez utilisé ?
+
+
+def get_na_info(area_type: str, area_name: str) -> tuple:
     # compute the values for the indicator
     NB_OF_NAN = df_energy_query(area_type, area_name).isna().sum().sum()
     NB_OF_NAN_GLOBAL = df_energy.isna().sum().sum()
@@ -50,14 +54,9 @@ def get_na_info(area_type: str, area_name: str):
 
     return NB_OF_NAN, NB_OF_NAN_GLOBAL, NB_MEAN_NAN
 
-fig_null_data = go.Figure(go.Bar(
-        x=serie_na.index,
-        y=serie_na,
-        text=serie_na,
-        textposition='auto'
-    ))
 
 ##################################
+#   <-- The layout of the page -->
 layout = html.Div(
     className="content",
     children=[
@@ -66,20 +65,22 @@ layout = html.Div(
             id='area_type-drop',
             multi=False,
             value="Continent",
-            style={'width': '48%', 'display': 'inline-block'}
+            style={'width': '50%', 'display': 'inline-block'}
         ),
         dcc.Dropdown(
             id='area_name-drop',
-            style={'width': '48%', 'display': 'inline-block'}),
+            style={'width': '50%', 'display': 'inline-block'}
+        ),
         dcc.Graph(id="indicator"),
         dcc.Graph(id="heatmap_missing_values"),
-        dcc.Graph(id="lines_graph"),
+        dcc.Graph(id="lines_values_percentage"),
         dcc.Graph(id="histo_hdi"),
     ]
 )
-#   <-- The dash app layout -->
 
 
+##################################
+#   <-- The dropdown menu -->
 @callback(
     Output('area_name-drop', 'options'),
     Input('area_type-drop', 'value'))
@@ -95,17 +96,17 @@ def set_cities_value(available_options):
 
 
 ##################################
-#   <-- heatmap_missing_values -->
+# <-- Indicator_missing_values -->
 @callback(Output(component_id="indicator", component_property="figure"),
           # Input(component_id="df_filter", component_property="data"),
           Input(component_id="area_type-drop", component_property="value"),
           Input(component_id="area_name-drop", component_property="value"))
-def indicator(area_type: str, area_name: str) -> go.Figure:
+def graph_indicator(area_type: str, area_name: str) -> go.Figure:
     """
-    The indicator function give a subplot with main information
-    :param area_type:
-    :param area_name:
-    :return:
+    The indicator function give a subplot with the more relevant information
+    :param area_type: ["Entity", "Continent", "Region", "iso3"]
+    :param area_name: ["France", "Europe", "Western Europe", "FRA", ...]
+    :return: go.Figure.Indicator | 1 row / 4 col | nub of : features, Country, ..., nan for a given area_name
     """
     NB_OF_NAN, NB_OF_NAN_GLOBAL, NB_MEAN_NAN = get_na_info(area_type, area_name)
     indicator = make_subplots(
@@ -138,9 +139,9 @@ def indicator(area_type: str, area_name: str) -> go.Figure:
     indicator.add_trace(go.Indicator(
         mode="number",
         value=NB_OF_NAN_GLOBAL,
-        title={"text": f"Number of nan for {area_name}<br>"
+        title={"text": f"Number of nan<br>"
                        "<span style='font-size:0.8em;color:gray'>"
-                       f"compare to the mean of {type}</span>"
+                       f"in the dataset</span>"
                }
     ),
         row=1, col=3
@@ -150,15 +151,16 @@ def indicator(area_type: str, area_name: str) -> go.Figure:
         mode="number+delta",  # 'delta' mean the % btw the value and a ref
         value=NB_OF_NAN,  # nb of nan for the current country looked
         delta={'reference': int(NB_MEAN_NAN), 'relative': True, 'valueformat': '.2f', "suffix": "%"},
-        title={"text": f"NN of nan for {area_name}<br>"
+        title={"text": f"Number of nan for {area_name}<br>"
                        "<span style='font-size:0.8em;color:gray'>"
-                       f"compare to the mean of {type}</span>"
+                       f"compare to the mean of {area_type}</span>"
                }
     ),
         row=1, col=4
     )
     indicator.update_layout(
         height=230,
+        template=THEME,
     )
 
     return indicator
@@ -170,10 +172,12 @@ def indicator(area_type: str, area_name: str) -> go.Figure:
           # Input(component_id="df_filter", component_property="data"),
           Input(component_id="area_type-drop", component_property="value"),
           Input(component_id="area_name-drop", component_property="value"))
-def heatmap_missing_values(area_type: str, area_name: str) -> go.Figure:
+def graph_heatmap_missing_values(area_type: str, area_name: str) -> go.Figure:
     """
-    This function creat a complexe multi-figure within a heatmap of missing values for the given area_name for all features and an indicator trace.
-    # :param df_filtered:
+    This function creat a complexe multi-figure within a heatmap of missing values for :
+    - the given area_name
+    - all features
+    - an indicator trace.
     :param area_type: ["Entity", "Continent", "Region", "iso3"]
     :param area_name: ["France", "Europe", "Western Europe", "FRA", ...]
     :return: a figure object of the plotly lib (heatmap + indicator)
@@ -184,8 +188,7 @@ def heatmap_missing_values(area_type: str, area_name: str) -> go.Figure:
 
     df_heat = df_energy_query(area_type, area_name)[col]  # make the df with for the given area_name
     df_heat_na = df_heat.isna()
-    df_heat_na.replace({True: 1, False: 0},
-                       inplace=True)  # We change the True to 1 because plotly can not interpret them
+    df_heat_na.replace({True: 1, False: 0}, inplace=True)  # We change the True to 1 because plotly can't interpret them
 
     df_heat_na['Year'] = df_energy['Year']  # add the year column to the df
     transposed_df = df_heat_na.groupby('Year').sum().T
@@ -209,25 +212,90 @@ def heatmap_missing_values(area_type: str, area_name: str) -> go.Figure:
             title="nombre",
             titleside="top"
         ),
-    )
-    )
+    ))
     heatmap.update_layout(
         height=430,
+        template=THEME,
     )
 
     return heatmap
 
 
+@callback(Output(component_id="lines_values_percentage", component_property="figure"),
+          # Input(component_id="df_filter", component_property="data"),
+          Input(component_id="area_type-drop", component_property="value"),
+          Input(component_id="area_name-drop", component_property="value"))
+def graph_lines_percentage(area_type: str, area_name: str) -> go.Figure:
+    df_normalized = df_energy_query(area_type, area_name)
+    df_normalized.replace({np.nan: 1, 0: 1}, inplace=True)
+
+    cols_to_normalize = df_normalized.columns.difference(
+        ['Country', 'Year', 'Continent', 'Region', 'iso3', 'Access to Electricity (%)', 'Low-Carbon Electricity (%)',
+         'Renewables (% Equivalent Primary Energy)'])
+    # Exclure les colonnes non numériques et celle qui sont deja en %
+
+    # assert
+    df_normalized[cols_to_normalize].apply(lambda s: pd.to_numeric(s, errors='coerce').notnull().all())
+
+    # Créez un masque pour exclure les années autres que 2000
+    mask_2000 = (df_normalized['Year'] == 2000)
+    df_normalized_2000 = df_normalized[mask_2000][cols_to_normalize].reindex(df_normalized.index, method='pad')
+
+    df_normalized[cols_to_normalize] = ((df_normalized[cols_to_normalize] - df_normalized_2000[
+        cols_to_normalize]) / df_normalized_2000) * 100
+
+    df_line = df_normalized.query("Continent == 'Asia'")
+    df_line = df_line.groupby("Year").sum()
+
+    lines = px.line(df_line, x=df_line.index, y=cols_to_normalize,
+                    markers=True, log_y=False,
+                    title="Evolution in % with 2000 as reference",
+                    template=THEME,
+                    )
+
+    # Change the name of the variable in the légend. The goal is to have a better render and have shortened name
+    legend_new = {
+        'CO2 Emissions (kt by country)': 'CO2 Emissions',
+        'Electricity from Fossil Fuels (TWh)': 'Electricity Fossil',
+        'Electricity from Nuclear (TWh)': 'Electricity Nuclear',
+        'Electricity from Renewables (TWh)': 'Electricity Renewables',
+        'GDP Growth': 'GDP Growth',
+        'GDP per Capita': 'GDP per Capita',
+        'Human Development Index': 'HDI',
+        'Primary Energy Consumption per Capita (kWh/person)': 'Primary Energy',
+        'Renewable Electricity Capacity per Capita': 'Renewable Electricity'
+    }
+
+    lines.for_each_trace(lambda t: t.update(name=legend_new[t.name]))
+    # legendgroup = legend_new[t.name],
+    # hovertemplate = t.hovertemplate.replace(t.name, legend_new[t.name])
+
+    lines.update_layout(
+
+        legend=dict(
+            orientation="h",
+            entrywidth=70,
+            yanchor="bottom",
+            y=-0.5,
+            xanchor="right",
+            x=1
+        ),
+    )
+    return lines
+
+
 @callback(Output(component_id="histo_hdi", component_property="figure"),
           Input(component_id="area_type-drop", component_property="value"),
           Input(component_id="area_name-drop", component_property="value"), )
-def histo_hdi(area_type: str, area_name: str, reference_year: int = 2020) -> go.Figure:
+def graph_histo_hdi(area_type: str, area_name: str, reference_year: int = 2020) -> go.Figure:
     """
-    histo_HDI make a histogram with the frequency of HDI for a given area type. The slider change the year of observation. The area name is the current country observed.
-    :param reference_year:
-    :param area_type:
-    :param area_name:
-    :return:
+    The functino graph_histo_HDI make a histogram with the frequency of HDI for a given area type.
+    The slider change the year of observation and a marginal distribution as a box plot.
+    The area name is the current country observed.
+    :param reference_year: an int in [2000, 2020]
+    :param area_type: ["Entity", "Continent", "Region", "iso3"]
+    :param area_name: ["France", "Europe", "Western Europe", "FRA", ...]
+    :return: go.Figure.histogram
     """
     # Selection feature needed
     df_histo = pd.DataFrame(data=df_energy,
@@ -246,9 +314,20 @@ def histo_hdi(area_type: str, area_name: str, reference_year: int = 2020) -> go.
                          title='Histogram Human Development Index per year with 2020 as reference',
                          pattern_shape="reference",
                          opacity=1,
-                         # template=THEME,
+                         template=THEME,
                          text_auto=True,
                          animation_frame="Year",
                          )
 
+    histo.update_layout(
+        showlegend=False
+    )
+
     return histo
+
+# TODO : Dans le dashboard :
+#   - Transformer df-energy en get pour tous dataframe
+#   - Verif df_histo pour voir si il y a update en function des param
+#   - Regarder PEP8°8
+#   - Add comment
+#   - remove title and add them as html

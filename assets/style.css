@@ -36,9 +36,15 @@
     --typo-url : #ba9ffb;
 }
 
-html {
+.html {
+	background-color:rgba(255, 255, 255, 1);
     margin: 0;
     padding: 0;
+    width:100%;
+	height:100%;
+	position:absolute;
+	display:block;
+
 }
 
 body {
@@ -47,4 +53,87 @@ body {
 
 body::-webkit-scrollbar {
   display: none;
+}
+
+.header {
+	width:100%;
+	height:10%;
+	position:relative;
+}
+.header_title {
+	color:rgba(0, 0, 0, 1);
+	width: 100%;
+	height:50%;
+	top: 50%;
+	position:absolute;
+	font-family:Georgia, 'Times New Roman', Times, serif;
+	text-align:center;
+	font-size:300%;
+	letter-spacing:0;
+	transform: translate(0%,-50%);
+}
+
+
+.div_map {
+	width:61%;
+	height:45%;
+	margin: 0.5%;
+	position:relative;
+	display: inline-block;
+}
+.div_map_bg {
+	background-color:rgba(239.0625, 239.0625, 239.0625, 1);
+	width:100%;
+	height:100%;
+	position:absolute;
+	left:0px;
+	top:0px;
+	border-radius: 26px;
+}
+.div_pie1 {
+	width:35%;
+	height:47%;
+	top: -16%;
+	margin:0.5%;
+	position:relative;
+	display: inline-block;
+}
+.div_pie1_bg {
+	background-color:rgba(239.0625, 239.0625, 239.0625, 1);
+	width:100%;
+	height:100%;
+	position:absolute;
+	border-radius: 26px;
+
+}
+.div_filter {
+	width:35%;
+	height:29%;
+	top: -16%;
+	position:relative;
+	display: inline-block;
+	margin:0.5%;
+
+}
+.div_filter_bg {
+	background-color:rgba(239.0625, 239.0625, 239.0625, 1);
+	width:100%;
+	height:100%;
+	position:absolute;
+	border-radius: 26px;
+}
+.div_hist {
+	width:61%;
+	height:31%;
+	top: -16%;
+	position:relative;
+	display: inline-block;
+	margin:0.5%;
+}
+.div_hist_bg {
+	background-color:rgba(239.0625, 239.0625, 239.0625, 1);
+	width:100%;
+	height:100%;
+	position:absolute;
+	border-radius: 26px;
 }

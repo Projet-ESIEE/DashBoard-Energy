@@ -12,6 +12,13 @@ dash.register_page(
     analytics=True,
 )
 THEME = "plotly_white"
+
+color_map = {
+    "Fossil Fuels": "rgb(2223,95,73)",
+    "Nuclear": "rgb(74,147,255)",
+    "Renewables": "rgb(0,205,94)"
+}
+
 path_energy = os.path.join("dataset", "energy-cleaned-dataset.csv")
 df_energy = pd.read_csv(path_energy)
 df_energy.insert(4, "Total electricity", np.sum([df_energy["Electricity from Fossil Fuels (TWh)"],
@@ -34,9 +41,66 @@ df_histo = pd.melt(df_histo, id_vars=["Country", "Continent", "Year"],
 df_histo["Electricity mode"] = df_histo["Electricity mode"].str.replace("Electricity from ", "")
 df_histo["Electricity mode"] = df_histo["Electricity mode"].str.replace(" (TWh)", "")
 
-def make_map(color="Total electricity", scope="world", year="2020"):
+
+layout = html.Div([
+    html.Div([
+        html.H1("Energy Dashboard",
+                className="header_title",
+                )
+    ],
+        className="header",
+    ),
+
+
+    html.Div([
+        html.Div(dcc.Slider(
+            df_histo['Year'].min(),
+            df_histo['Year'].max(),
+            step=1,
+            id="slider",
+            value=df_histo['Year'].max(),
+            marks={str(year): str(year) for year in df_histo['Year'].unique() if year % 5 == 0}
+        ),
+            className="div_filter_bg")
+    ], className="div_filter"),
+
+    html.Div([
+        html.Div([
+            dcc.Graph(
+                id='map',
+                hoverData={'points': [{'location': 'Japan'}]},
+                config={'responsive': True}
+            )],
+            className="div_map_bg")
+    ],
+        className="div_map",
+    ),
+
+    html.Div([
+        html.Div([
+            dcc.Graph(id='pie')
+        ], className="div_pie1_bg")
+    ], className="div_pie1"),
+
+    html.Div([
+        html.Div([
+            dcc.Graph(id='histogram')
+        ], className="div_hist_bg")
+    ], className="div_hist"),
+], className="html",
+)
+
+
+@callback(
+    Output("map", "figure"),
+    [Input("slider", "value")]
+)
+# def make_map(color="Total electricity", scope="world", year="2020"):
+def make_map(year_value):
+    color = "Total electricity"
+    scope = "world"
     fig = px.choropleth(
-        df_energy,
+        df_energy[df_energy["Year"] == year_value],
         locations="Country",
         color=color,
         hover_name="Country",
@@ -64,80 +128,47 @@ def make_map(color="Total electricity", scope="world", year="2020"):
     return fig
 
 
-def init_pie():
-    df_pie = df_histo.query("Country=='France'")
+@callback(
+    Output("pie", "figure"),
+    [Input("map", "hoverData"),
+     Input("slider", "value")]
+)
+def pie(hoverData, year_value):
+    pays = hoverData['points'][0]["location"]
+    df_pie = df_histo.query("Country=='" + pays + "' and Year==" + str(year_value))
     fig = px.pie(
         df_pie,
         names="Electricity mode",
         values="Electricity (TWh)",
+        opacity=0.9,
     )
+
+    fig.update_traces(marker=dict(colors=[color_map[mode] for mode in df_pie["Electricity mode"]]))
     fig.update_layout(
         paper_bgcolor="rgba(0,0,0,0)"
     )
     return fig
 
 
-layout = html.Div([
-    html.Div([
-        html.H1("Energy Dashboard",
-                className="header_title",
-                )
-    ],
-        className="header",
-    ),
-
-    html.Div([
-        html.Div([
-            dcc.Graph(id='pie3', figure=init_pie())
-        ], className="div_filter_bg")
-    ], className="div_filter"),
-
-    html.Div([
-        html.Div([
-            dcc.Graph(
-                id='map',
-                figure=make_map(),
-                hoverData={'points': [{'location': 'Japan'}]},
-                config={'responsive': True}
-            )],
-            className="div_map_bg")
-    ],
-        className="div_map",
-    ),
-
-    html.Div([
-        html.Div([
-            dcc.Graph(id='pie', figure=init_pie())
-        ], className="div_pie1_bg")
-    ], className="div_pie1"),
-    # html.Div([
-    #     html.Div([
-    #         dcc.Graph(id='pie2', figure=init_pie())
-    #     ], className="div_pie2_bg")
-    # ], className="div_pie2"),
-
-    html.Div([
-        html.Div([
-            dcc.Graph(id='pie4', figure=init_pie())
-        ], className="div_hist_bg")
-    ], className="div_hist"),
-], className="html",
-)
-
-
 @callback(
-    Output("pie", "figure"),
+    Output("histogram", "figure"),
     [Input("map", "hoverData")]
 )
-def pie(hoverData):
+def histogram(hoverData):
     pays = hoverData['points'][0]["location"]
-    df_pie = df_histo.query("Country=='" + pays + "'")
-    fig = px.pie(
-        df_pie,
-        names="Electricity mode",
-        values="Electricity (TWh)",
-    )
+    df_histogram = df_histo.query("Country=='" + pays + "'").copy()
+    df_histogram["Year"] = df_histogram["Year"].astype(str)
+    fig = px.histogram(df_histogram,
+                       x="Year",
+                       y="Electricity (TWh)",
+                       color="Electricity mode",
+                       color_discrete_map=color_map,
+                       opacity=0.8)
     fig.update_layout(
-        paper_bgcolor="rgba(0,0,0,0)"
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        geo=dict(bgcolor="rgba(239.0625, 239.0625, 239.0625, 1)"),
+        height=300,
+        margin=dict(l=50, r=20, t=20, b=100)
     )
     return fig

@@ -50,7 +50,7 @@ def get_na_info(area_type: str, area_name: str):
 
     return NB_OF_NAN, NB_OF_NAN_GLOBAL, NB_MEAN_NAN
 
-    fig_null_data = go.Figure(go.Bar(
+fig_null_data = go.Figure(go.Bar(
         x=serie_na.index,
         y=serie_na,
         text=serie_na,

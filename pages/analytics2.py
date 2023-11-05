@@ -41,36 +41,6 @@ df_histo = pd.melt(df_histo, id_vars=["Country", "Continent", "Year"],
 df_histo["Electricity mode"] = df_histo["Electricity mode"].str.replace("Electricity from ", "")
 df_histo["Electricity mode"] = df_histo["Electricity mode"].str.replace(" (TWh)", "")
 
-#
-# def make_map(color="Total electricity", scope="world", year="2020"):
-#     fig = px.choropleth(
-#         df_energy,
-#         locations="Country",
-#         color=color,
-#         hover_name="Country",
-#         hover_data=[color],
-#         locationmode="country names",
-#         range_color=[min(df_energy[color]), max(df_energy[color])],
-#         scope=scope,
-#         color_continuous_scale=px.colors.sequential.thermal_r,
-#     )
-#     fig.update_geos(
-#         visible=False,
-#         showcoastlines=True,
-#     )
-#     fig.update_layout(
-#         paper_bgcolor="rgba(0,0,0,0)",
-#         hovermode='closest',
-#         autosize=False,
-#         margin=dict(l=50, r=20, t=20, b=130),
-#         width=900,
-#         # height=500,
-#         coloraxis_colorbar=dict(title=color, len=1, orientation="v"),
-#         # plot_bgcolor='rgba(0,0,0,0)',
-#         geo=dict(bgcolor="rgba(239.0625, 239.0625, 239.0625, 1)")
-#     )
-#     return fig
-
 
 layout = html.Div([
     html.Div([
@@ -81,11 +51,6 @@ layout = html.Div([
         className="header",
     ),
 
-    # html.Div([
-    #     html.Div([
-    #         dcc.Graph(id='filter')
-    #     ], className="div_filter_bg")
-    # ], className="div_filter"),
 
     html.Div([
         html.Div(dcc.Slider(
@@ -103,7 +68,6 @@ layout = html.Div([
         html.Div([
             dcc.Graph(
                 id='map',
-                # figure=make_map(),
                 hoverData={'points': [{'location': 'Japan'}]},
                 config={'responsive': True}
             )],
@@ -176,8 +140,10 @@ def pie(hoverData, year_value):
         df_pie,
         names="Electricity mode",
         values="Electricity (TWh)",
-        color_discrete_map=color_map,
+        opacity=0.9,
     )
+
+    fig.update_traces(marker=dict(colors=[color_map[mode] for mode in df_pie["Electricity mode"]]))
     fig.update_layout(
         paper_bgcolor="rgba(0,0,0,0)"
     )
@@ -190,7 +156,7 @@ def pie(hoverData, year_value):
 )
 def histogram(hoverData):
     pays = hoverData['points'][0]["location"]
-    df_histogram = df_histo.query("Country=='" + pays + "'")
+    df_histogram = df_histo.query("Country=='" + pays + "'").copy()
     df_histogram["Year"] = df_histogram["Year"].astype(str)
     fig = px.histogram(df_histogram,
                        x="Year",

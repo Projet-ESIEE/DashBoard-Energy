@@ -42,6 +42,11 @@ def df_energy_query(area_type: str, area_name: str) -> pd.DataFrame:
     return df_energy.query(f"{area_type} == '{area_name}'")
 
 
+# ADDDOC :
+#   - prb : La fonciton est apl plusieurs fois
+#   - est ce que mettre un call back pour quelle soit apl 1 seul fois par modif est bon ? mettre en global ? Output incompatible avec df ?
+
+
 # TODO : Est-ce que la fonction est assez utilisé ?
 
 
@@ -297,12 +302,8 @@ def graph_histo_hdi(area_type: str, area_name: str, reference_year: int = 2020) 
     :param area_name: ["France", "Europe", "Western Europe", "FRA", ...]
     :return: go.Figure.histogram
     """
-    # Selection feature needed
-    df_histo = pd.DataFrame(data=df_energy,
-                            columns=['Year', 'Country', 'Continent', 'Region', 'Human Development Index'])
-
-    # Filtering by the area_name and the year + the reference year for this same are_name
-    df_histo_filtered = df_histo.query(f"{area_type} == '{area_name}'")
+    df_histo = df_energy_query(area_type, area_name)
+    df_histo_filtered = df_histo[['Year', 'Country', 'Continent', 'Region', 'Human Development Index']]
 
     # Creation of the feature 'reference' that is a boolean.
     df_histo_filtered['reference'] = df_histo_filtered['Year'] == reference_year
@@ -311,7 +312,7 @@ def graph_histo_hdi(area_type: str, area_name: str, reference_year: int = 2020) 
                          x="Human Development Index",
                          marginal="box",  # ["rug", "box", "violin"]
                          color="reference",
-                         title='Histogram Human Development Index per year with 2020 as reference',
+                         title=f"Histogram Human Development Index per year for {area_name}",
                          pattern_shape="reference",
                          opacity=1,
                          template=THEME,
@@ -320,14 +321,19 @@ def graph_histo_hdi(area_type: str, area_name: str, reference_year: int = 2020) 
                          )
 
     histo.update_layout(
-        showlegend=False
+        showlegend=False,
+        transition={'duration': 100}
     )
 
     return histo
 
 # TODO : Dans le dashboard :
-#   - Transformer df-energy en get pour tous dataframe
-#   - Verif df_histo pour voir si il y a update en function des param
+#   - Transformer df-energy en get pour tous dataframe ?
 #   - Regarder PEP8°8
 #   - Add comment
 #   - remove title and add them as html
+#   - Entity ou Continent ? !
+
+# FIXME :
+#   - Verif que les function (histo / indicator droite) s'update pour tous les area_type
+#   - Revoir les nan et 0 avec replace dans linegraph

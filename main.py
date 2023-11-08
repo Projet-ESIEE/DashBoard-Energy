@@ -2,6 +2,13 @@ import dash
 import dash_bootstrap_components as dbc
 from dash_bootstrap_templates import ThemeSwitchAIO
 
+import importlib
+
+name = "an_unknown_package"
+spec = importlib.util.find_spec(name)
+if spec is None:
+    print(f"can't find {name!r}")
+
 # select the Bootstrap stylesheets and figure templates for the theme toggle here:
 # url_theme1 = dbc.themes.FLATLY
 # url_theme2 = dbc.themes.DARKLY

@@ -76,3 +76,7 @@ The app is composed of 5 pages :
 - **Report** : which highlights the main conclusions drawn from the data.
 - **Developer Guide** : which allows you to understand the architecture of the code and modify or extend it.
 
+# Other ressources : 
+Please find the **Developer Guide* and the *User Guide* for technical information and the **Rapport** for the analyses.
+
+

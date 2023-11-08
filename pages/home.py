@@ -8,12 +8,11 @@ dash.register_page(
 )
 
 MARKDOWN = """
-                # <center>DashBoard-Energy :</center> 
                 [![Benoit Profile](https://img.shields.io/badge/Made%20with-Benoit%20Marchadier-brightgreen)](https://github.com/bebe0106)
                 [![Antoine Profile](https://img.shields.io/badge/Made%20with-Antoine%20Aubert-blue)](https://github.com/Aubert-Antoine)
                 
                 
-                <u>**[GitHub project address](https://github.com/Projet-ESIEE/DashBoard-Energy)**</u>
+                **[GitHub project address](https://github.com/Projet-ESIEE/DashBoard-Energy)**
                 
                 Please find the **Developer Guide** and the **User Guide** for technical information and the **Rapport** for the analyses.
                 
@@ -95,7 +94,7 @@ MARKDOWN = """
 layout = html.Div(
     className="content",
     children=[
-        html.H2('This is our Home page'),
+        html.H1('This is our Home page'),
         dcc.Markdown(MARKDOWN)
 ])
 

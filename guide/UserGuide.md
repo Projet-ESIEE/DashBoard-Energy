@@ -1,14 +1,21 @@
-# The user guide
-qui permet de déployer et d’utiliser votre dashboard sur une autre machine ;
+# <center>The user guide</center>
+This file lets you deploy and use your dashboard on another machine
 
-### How to clone the git repo
-`git clone url ...`
-### Requirements
-- python version
-- dependency + version
-- requirement.txt
+## How to clone the git repo
+`git clone https://github.com/Projet-ESIEE/DashBoard-Energy`
+
+## librairy used and Requirements: 
+Check the `requirement.txt` to get the list of dependency and the version used for running the app.
+Plotly is the only librairy used to plot graph. Dash is then used to power the dashboard. 
+Of course Pandas and Numpy are use all around the project. (seaborn is not mandatory)
+
+`pip install -r requirements.txt` to install all the dependency.
+
+*To get the list of dependency :*
+```shell
+pip install pipreqs 
+pipreqs
+```
 ### Launch the app
-`python main.py`
+`python main.py` or use the `main.run.xml` in .run folder for PyCharm user.
 
-### Contribution 
-hehe

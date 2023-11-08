@@ -1,17 +1,6 @@
 import dash
 import dash_bootstrap_components as dbc
-from dash_bootstrap_templates import ThemeSwitchAIO
 
-
-
-# select the Bootstrap stylesheets and figure templates for the theme toggle here:
-# url_theme1 = dbc.themes.FLATLY
-# url_theme2 = dbc.themes.DARKLY
-# theme_toggle = ThemeSwitchAIO(
-#     aio_id="theme",
-#     themes=[url_theme2, url_theme1],
-#     icons={"left": "fa fa-sun", "right": "fa fa-moon"},
-# )
 external_stylesheets1 = dbc.themes.COSMO
 external_stylesheets2 = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = dash.Dash(

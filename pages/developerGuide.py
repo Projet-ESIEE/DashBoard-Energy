@@ -1,14 +1,11 @@
 import dash
-from dash import html, dcc, callback, Input, Output
+from dash import html, dcc
 
 dash.register_page(
     __name__,
     name="Developer guide",
     guide=True,
 )
-
-
-THEME = "plotly_dark"
 
 layout = html.Div(
     className="content",

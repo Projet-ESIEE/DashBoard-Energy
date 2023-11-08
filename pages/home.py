@@ -8,20 +8,25 @@ dash.register_page(
 )
 
 MARKDOWN = """
+                # <center>DashBoard-Energy :</center> 
                 [![Benoit Profile](https://img.shields.io/badge/Made%20with-Benoit%20Marchadier-brightgreen)](https://github.com/bebe0106)
                 [![Antoine Profile](https://img.shields.io/badge/Made%20with-Antoine%20Aubert-blue)](https://github.com/Aubert-Antoine)
                 
                 
-                **[GitHub project address](https://github.com/Projet-ESIEE/DashBoard-Energy)**
+                <u>**[GitHub project address](https://github.com/Projet-ESIEE/DashBoard-Energy)**</u>
                 
+                Please find the **Developer Guide** and the **User Guide** for technical information and the **Rapport** for the analyses.
+                
+                ---
+                
+                # DashBoard Energy README :
                 Please find below the different subsections of this page :
                 
                 1. [Introduction](#introduction)
                 2. [Data](#data)
                 3. [Data visualisation](#data-visualisation)
                 4. [Pages](#pages)
-                5. [How to guide](#how-to-guide)    
-                6. [Conclusion](#conclusion)
+                
                 
                 ## Introduction 
                 This app is a dashboard that allows you to visualize the evolution of the energy consumption of the world's countries over the last 20 years. 
@@ -35,7 +40,9 @@ MARKDOWN = """
                 The data are cleaned and processed in the [process_data.py]() file. The data are then stored in the [dataset]() folder.
                 
                 Data set *1.* : [kaggle : sustainable energy](https://www.kaggle.com/datasets/anshtanwar/global-data-on-sustainable-energy) (500ko)
+                
                 Data set *2.* : [Our world in data : human development index](https://ourworldindata.org/human-development-index) (146ko)
+                
                 Data set *3.* : [Country to continent](https://www.kaggle.com/datasets/statchaitya/country-to-continent/data) (16ko)
                 
                 #### Description of the data set *1.* :
@@ -80,10 +87,10 @@ MARKDOWN = """
                 - **Home** : This current page.
                 - **Missing values analytics** : analyse the missing values of the dataset and visualisez the global trend via a few plots. 
                 - **Maps & histogram analytics** : 
-                - **User guide** : which lets you deploy and use your dashboard on another machine
+                - **User Guide** : which lets you deploy and use your dashboard on another machine
                 - **Report** : which highlights the main conclusions drawn from the data.
-                - **Developer guide** : which allows you to understand the architecture of the code and modify or extend it.
-                """
+                - **Developer Guide** : which allows you to understand the architecture of the code and modify or extend it.
+            """
 
 layout = html.Div(
     className="content",

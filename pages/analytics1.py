@@ -23,33 +23,28 @@ THEME = "plotly_white"
 area_options = {
     'Continent': df_energy['Continent'].unique(),
     'Region': df_energy['Region'].unique(),
-    # 'Country': df_energy['Country'].unique(),
+    'Country': df_energy['Country'].unique(),
 }
 
 
-# @callback(Output(component_id="df_filter", component_property="data"),
-#          Input(component_id="area_type-drop", component_property="value"),
-#          Input(component_id="area_name-drop", component_property="value"))
 def df_energy_query(area_type: str, area_name: str) -> pd.DataFrame:
     """
     The function df_energy_query return a filtered dataframe of df_energy.
     It useful because the computation is done only one time.
-    :param area_type:
-    :param area_name:
+    :param area_type: ["Entity", "Continent", "Region", "iso3"]
+    :param area_name: ["France", "Europe", "Western Europe", "FRA", ...]
     :return: a pandas dataframe which is subpart of the df_energy
     """
     return df_energy.query(f"{area_type} == '{area_name}'")
 
 
-# ADDDOC :
-#   - prb : La fonciton est apl plusieurs fois
-#   - est ce que mettre un call back pour quelle soit apl 1 seul fois par modif est bon ? mettre en global ?
-#   Output incompatible avec df ? uniquement obj json ou str seriablisable
-# TODO : Est-ce que la fonction est assez utilisé ?
-
-
 def get_na_info(area_type: str, area_name: str) -> tuple:
-    # compute the values for the indicator
+    """
+    Give information about the missing values of the dataframe
+    :param area_type: ["Entity", "Continent", "Region", "iso3"]
+    :param area_name: ["France", "Europe", "Western Europe", "FRA", ...]
+    :return: NB_OF_NAN, NB_OF_NAN_GLOBAL, NB_MEAN_NAN
+    """
     NB_OF_NAN = df_energy_query(area_type, area_name).isna().sum().sum()
     NB_OF_NAN_GLOBAL = df_energy.isna().sum().sum()
     NB_MEAN_NAN = (NB_OF_NAN_GLOBAL / len(df_energy[area_type].unique()))
@@ -198,8 +193,8 @@ def graph_heatmap_missing_values(area_type: str, area_name: str) -> go.Figure:
     transposed_df = df_heat_na.groupby('Year').sum().T
 
     # testing after the upper calculation to be sure that the nb of missing val and shape is plausible
-    assert transposed_df.sum().sum() == df_energy.query(
-        f"{area_type} == '{area_name}'").isna().sum().sum(), "<-- The sum of nan is  not the same -->"
+    assert transposed_df.sum().sum() == df_energy_query(area_type, area_name).isna().sum().sum(), \
+        "<-- The sum of nan is  not the same -->"
     assert transposed_df.shape[0] == len(col), "<-- The number of columns is not the same -->"
     assert transposed_df.shape[1] == len(
         df_energy['Year'].unique().tolist()), "<-- The number of rows is not the same -->"
@@ -234,6 +229,7 @@ def graph_lines_percentage(area_type: str, area_name: str) -> go.Figure:
     :param area_name: ["France", "Europe", "Western Europe", "FRA", ...]
     :return: go.Figure.line object, with a centered legend
     """
+
     df_normalized = df_energy_query(area_type, area_name)
     df_normalized = df_normalized.replace(0, 1)
 
@@ -242,8 +238,8 @@ def graph_lines_percentage(area_type: str, area_name: str) -> go.Figure:
          'Renewables (% Equivalent Primary Energy)'])
     # Exclure les colonnes non numériques et celle qui sont deja en %
 
-    # assert
-    df_normalized[cols_to_normalize].apply(lambda s: pd.to_numeric(s, errors='coerce').notnull().all())
+    assert df_normalized[cols_to_normalize].apply(
+        lambda s: pd.to_numeric(s, errors='coerce').notnull().all()).sum() != 9, "<-- All values are not numeric -->"
 
     # Créez un masque pour exclure les années autres que 2000
     mask_2000 = (df_normalized['Year'] == 2000)
@@ -253,13 +249,12 @@ def graph_lines_percentage(area_type: str, area_name: str) -> go.Figure:
     df_normalized[cols_to_normalize] = ((df_normalized[cols_to_normalize] - df_normalized_2000[
         cols_to_normalize]) / df_normalized_2000) * 100
 
-    df_line = df_normalized.query("Continent == 'Asia'")
-    df_line = df_line.groupby("Year").sum()
+    df_line = df_normalized.groupby("Year").sum()
 
     lines = px.line(df_line, x=df_line.index, y=cols_to_normalize,
                     markers=True, log_y=False,
-                    template=THEME,
-                    log_x=True,  # to force to have more years display
+                    title="Evolution in % with 2000 as reference",
+                    # template=THEME,
                     )
 
     # Change the name of the variable in the légend. The goal is to have a better render and have shortened name
@@ -278,18 +273,17 @@ def graph_lines_percentage(area_type: str, area_name: str) -> go.Figure:
     lines.for_each_trace(lambda t: t.update(name=legend_new[t.name]))
     # legendgroup = legend_new[t.name],
     # hovertemplate = t.hovertemplate.replace(t.name, legend_new[t.name])
-    # https://stackoverflow.com/questions/64371174/how-to-change-variable-label-names-for-the-legend-in-a-plotly-express-line-chart
 
     lines.update_layout(
+
         legend=dict(
             orientation="h",
-            entrywidth=0,
+            entrywidth=70,
             yanchor="bottom",
             y=-0.5,
-            xanchor="left",
-            x=0
+            xanchor="right",
+            x=1
         ),
-        title=f"Evolution in pourcentage of serval variables across years for countries of {area_name}"
     )
     return lines
 
@@ -333,14 +327,3 @@ def graph_histo_hdi(area_type: str, area_name: str, reference_year: int = 2020) 
     )
 
     return histo
-
-# TODO : Dans le dashboard :
-#   - Transformer df-energy en get pour tous dataframe ?
-#   - Regarder PEP8°8
-#   - Add comment
-#   - remove title and add them as html
-#   - Entity ou Continent ? !
-
-# FIXME :
-#   - Verif que les function (histo / indicator droite) s'update pour tous les area_type
-#   - Revoir les nan et 0 avec replace dans linegraph

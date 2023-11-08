@@ -1,9 +1,7 @@
 # Developer Guide : 
-un « Developper Guide » qui permet de comprendre l’architecture du code et de modifier ou d’étendre celui ci.
---- 
-pip install pipreqs 
-pipreqs
 
+The purpose is to allows you to understand the architecture of the code and modify or extend it.
+--- 
 
 ## Project structure : 
 ```shell
@@ -18,6 +16,7 @@ pipreqs
 - README.md
 - requirement.txt
 ```
+
 
 ### Multi-pages :
 This multi-pages repository is set like the [official documentation](https://dash.plotly.com/urls) guidelines.
@@ -34,18 +33,118 @@ The `LICENSE` is the file which indicate under which condition the project could
 The `README.md` fie is the landing page on GitHub. contain a brief description of the project.
 The `requirement.txt` is the list of all necessary dependency with the version.
 
+### Mermaid magic: 
+```mermaid
+graph TB
+
+%% Directories
+run(Run) -->|Executes| mainpy(Main.py)
+assets(Assets) -->|Static files| assetsFiles
+dataset(Dataset) -->|Data files| datasetFiles
+guide(Guide) -->|Documentation| guideFiles
+pages(Pages) -->|Web Pages| home(Home)
+pages --> analytics1(Analytics 1)
+pages --> analytics2(Analytics 2)
+pages --> guide1(Guide 1)
+pages --> guide2(Guide 2)
+
+%% Files
+mainpy(Main.py)
+.gitignore(.gitignore)
+LICENSE(LICENSE)
+README(README.md)
+requirement(requirement.txt)
+
+%% Subdirectories
+subgraph assetsFiles[Static Files]
+    image1[Favicon]
+    image2[404.gif]
+    image3[style.css]
+end
+
+subgraph datasetFiles[Data Files]
+    data1[global-data-sustainable-energy.csv]
+    data2[countryContinent.csv]
+    data3[human-development-index.csv]
+   
+end
+
+subgraph guideFiles[Documentation]
+    doc1[User Guide]
+    doc2[Developer Guide]
+    doc3[Rapport]
+end
+```
+
+TB - Top to bottom
+TD - Top-down/ same as top to bottom
+BT - Bottom to top
+RL - Right to left
+LR - Left to right
+
+```mermaid
+---
+title: Dash app Flow chart
+---
+flowchart TD
+subgraph "Run the App"
+  main{{main.py}} -- "call" --> analytics1{{missing values.py}}
+  analytics1{{missing values.py}} -- plots ----> heatmap[/heatmap/]
+  analytics1{{missing values.py}} -- plots ----> histo[/histo/]
+  analytics1{{missing values.py}} -- plots ----> line[/line/]
+  analytics1{{missing values.py}} -.query .-> df_energy
+
+  main{{main.py}} -- "call" --> analytics2{{maps.py}}
+  analytics2{{maps.py}} -.query .-> df_energy
+  analytics2{{maps.py}} -- plots ----> maps[/histo/]
+  analytics2{{maps.py}} -- plots ----> pie[/line/]
+
+  main{{main.py}} -- "call" --> home{{home.py}}
+  home{{home.py}} -- display --> readme.md
+
+  main{{main.py}} -- "call" --> guide1{{userGuide.py}}
+  guide1{{userGuide.py}} -- display --> userguide.md
+
+  main{{main.py}} -- "call" --> guide2{{devGuide.py}}
+  guide2{{devGuide.py}} -- display --> devGuide.md
+end
+
+
+subgraph "Build our dataset"
+  process_data{{process_data.ipynb}} -- "read" --> db[(.csv)]
+  db[(.csv)] -- "process + clean + merge" -->  dataframes
+  dataframes -- plots --> box[/box plots/]
+  dataframes -- create ---> df_energy.
+end
+```
+
+
+
 ## librairy used : 
 Check the `requirement.txt` to get the list of dependency and the version used for running the app.
 Plotly is the only librairy used to plot graph. Dash is then used to power the dashboard. 
-Of course Pandas and Numpy are use all around the project. 
+Of course Pandas and Numpy are use all around the project. (seaborn is not mandatory)
+
+`pip install -r requirements.txt` to install all the dependency.
+
+*To get the list of dependency :*
+```shell
+pip install pipreqs 
+pipreqs
+```
 
 ## How to Guide : 
 
-### Add a page to the Dash app : 
-
 ### Add an element to the Dash app layout : 
+```python
+layout = html.Div(
+    className="new-element-class",
+    children=[
+        html.H1('This a heading 1'),
+    ]
+```
 
-
+### customise the Dash app : 
 ['aggrnyl', 'agsunset', 'algae', 'amp', 'armyrose', 'balance',
  'blackbody', 'bluered', 'blues', 'blugrn', 'bluyl', 'brbg',
  'brwnyl', 'bugn', 'bupu', 'burg', 'burgyl', 'cividis', 'curl',
@@ -61,3 +160,6 @@ Of course Pandas and Numpy are use all around the project.
  'tealrose', 'tempo', 'temps', 'thermal', 'tropic', 'turbid',
  'turbo', 'twilight', 'viridis', 'ylgn', 'ylgnbu', 'ylorbr',
  'ylorrd'].
+
+### Theming plotly : 
+"plotly", "plotly_white", "plotly_dark", "ggplot2", "seaborn", "simple_white"

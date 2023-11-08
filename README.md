@@ -5,6 +5,10 @@
 
 <u>**[GitHub project address](https://github.com/Projet-ESIEE/DashBoard-Energy)**</u>
 
+Please find the **Developer Guide** and the **User Guide** for technical information and the **Rapport** for the analyses.
+
+---
+
 # DashBoard Energy README :
 Please find below the different subsections of this page :
 
@@ -12,8 +16,7 @@ Please find below the different subsections of this page :
 2. [Data](#data)
 3. [Data visualisation](#data-visualisation)
 4. [Pages](#pages)
-5. [How to Guide](#how-to-guide)    
-6. [Conclusion](#conclusion)
+
 
 ## Introduction 
 This app is a dashboard that allows you to visualize the evolution of the energy consumption of the world's countries over the last 20 years. 
@@ -27,7 +30,9 @@ The goal is to get all the data needed to show interesting graphs, and deduct so
 The data are cleaned and processed in the [process_data.py]() file. The data are then stored in the [dataset]() folder.
 
 Data set *1.* : [kaggle : sustainable energy](https://www.kaggle.com/datasets/anshtanwar/global-data-on-sustainable-energy) (500ko)
+
 Data set *2.* : [Our world in data : human development index](https://ourworldindata.org/human-development-index) (146ko)
+
 Data set *3.* : [Country to continent](https://www.kaggle.com/datasets/statchaitya/country-to-continent/data) (16ko)
 
 #### Description of the data set *1.* :
@@ -75,8 +80,4 @@ The app is composed of 5 pages :
 - **User Guide** : which lets you deploy and use your dashboard on another machine
 - **Report** : which highlights the main conclusions drawn from the data.
 - **Developer Guide** : which allows you to understand the architecture of the code and modify or extend it.
-
-# Other ressources : 
-Please find the **Developer Guide* and the *User Guide* for technical information and the **Rapport** for the analyses.
-
 

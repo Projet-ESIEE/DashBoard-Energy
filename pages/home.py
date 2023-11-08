@@ -96,5 +96,6 @@ layout = html.Div(
     children=[
         html.H1('This is our Home page'),
         dcc.Markdown(MARKDOWN)
-])
+    ]
+)
 

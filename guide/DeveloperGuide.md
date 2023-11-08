@@ -1,6 +1,9 @@
 # Developer Guide : 
 un « Developper Guide » qui permet de comprendre l’architecture du code et de modifier ou d’étendre celui ci.
 --- 
+pip install pipreqs 
+pipreqs
+
 
 ## Project structure : 
 ```shell

@@ -1,5 +1,4 @@
 import dash
-import dash_cytoscape as cyto
 from dash_extensions import Mermaid
 from dash import html, dcc
 

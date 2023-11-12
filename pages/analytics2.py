@@ -59,13 +59,15 @@ layout = html.Div([
                 step=1,
                 id="slider",
                 value=df_histo['Year'].max(),
-                marks={str(year): str(year) for year in df_histo['Year'].unique() if year % 5 == 0}
+                marks={str(year): str(year) for year in df_histo['Year'].unique() if year % 5 == 0},
+                className="div_filter_slider"
             ),
             html.H2(
                 children="test",
                 id="pourcentage",
-                className="pourcentage"
-            ), ], className="div_filter_bg")
+                className="div_filter_pourcentage"
+            )
+        ], className="div_filter_bg")
     ], className="div_filter"),
 
     html.Div([
@@ -143,6 +145,8 @@ def make_map(year_value):
     fig.update_geos(
         visible=False,
         showcoastlines=True,
+        center={"lat": 30, "lon": 0},  # Coordonnées latitudinales et longitudinales du centre
+        projection_scale=1.3
     )
     fig.update_layout(
         paper_bgcolor="rgba(0,0,0,0)",
@@ -150,8 +154,8 @@ def make_map(year_value):
         autosize=False,
         margin=dict(l=50, r=20, t=20, b=130),
         width=900,
-        # height=500,
-        coloraxis_colorbar=dict(title=color, len=1, orientation="v"),
+
+        coloraxis_colorbar=dict(title="", len=1, orientation="v"),
         # plot_bgcolor='rgba(0,0,0,0)',
         geo=dict(bgcolor="rgba(239.0625, 239.0625, 239.0625, 1)")
     )
@@ -200,6 +204,7 @@ def histogram(hoverData, year_value):
         plot_bgcolor="rgba(0,0,0,0)",
         geo=dict(bgcolor="rgba(239.0625, 239.0625, 239.0625, 1)"),
         height=300,
-        margin=dict(l=50, r=20, t=20, b=100)
+        margin=dict(l=50, r=20, t=20, b=100),
     )
+    fig.update_yaxes(title_text = "")
     return fig

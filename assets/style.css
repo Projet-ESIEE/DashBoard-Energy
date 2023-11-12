@@ -66,7 +66,7 @@ body::-webkit-scrollbar {
 	height:50%;
 	top: 50%;
 	position:absolute;
-	font-family:Georgia, 'Times New Roman', Times, serif;
+	/*font-family:Georgia, 'Times New Roman', Times, serif;*/
 	text-align:center;
 	font-size:300%;
 	letter-spacing:0;
@@ -122,6 +122,51 @@ body::-webkit-scrollbar {
 	position:absolute;
 	border-radius: 26px;
 }
+
+.div_filter_slider{
+	position:absolute;
+	width: 100%;
+	height: 10%;
+	top: 10%;
+	color: #0074cc;
+	/*font-family:Georgia, 'Times New Roman', Times, serif;*/
+}
+.div_filter_slider .rc-slider-handle {
+    border: 2px solid #0074cc;   /* Ajoute une bordure à la poignée */
+}
+.div_filter_slider .rc-slider-track {
+    height: 5px;  /* Ajuste l'épaisseur de la piste du curseur */
+}
+
+.div_filter_slider .rc-slider-handle {
+    width: 20px;   /* Ajuste la largeur de la poignée du curseur */
+    height: 20px;  /* Ajuste la hauteur de la poignée du curseur */
+	top: 2px;
+}
+
+.div_filter_slider .rc-slider-mark-text {
+    font-size: 17px;  /* Ajuste la taille des marqueurs */
+}
+
+.div_filter_slider .rc-slider-dot {
+    width: 15px;   /* Ajuste la largeur du point (marqueur) */
+    height: 15px;  /* Ajuste la hauteur du point (marqueur) */
+	top: -5px;
+}
+.div_filter_pourcentage{
+	color:rgba(0, 0, 0, 1);
+	width: 100%;
+	height:50%;
+	top: 70%;
+	position:absolute;
+	/*font-family:Georgia, 'Times New Roman', Times, serif;*/
+	text-align:center;
+	font-size:200%;
+	letter-spacing:0;
+	transform: translate(0%,-50%);
+}
+
+
 .div_hist {
 	width:61%;
 	height:31%;

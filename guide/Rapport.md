@@ -4,7 +4,7 @@
 ## Interprétation : 
 Malgré un certain nombre de données manquantes, nous pouvons faire de nombreuses conclusions sur leurs interpretations. 
 On constate à tous les niveaux une augmentation de la consommation d'énergie, des revenus et de l'IDH. 
-De manière attendue les pays avec un fort IHD ont une forte consommation énergétique. 
+De manière attendue les pays avec un fort IDH ont une forte consommation énergétique. 
 De même, on constate une explosion des energies renouvelable, une possible interpretation est qu'en 2000, elles n'était pas utile comparé à maintenant ou les enjeux écologiques sont primordiaux.
 Les comparaisons sont intéressants par régions ou par pays de même type (dévelopment économique, en voie de développement, etc.). 
 L'histogramme de l'IDH montre vraiment bien augmentation de l'indice dans le temps, le box plot associé permet aussi bien de voir l'évolution de manière condensée. 

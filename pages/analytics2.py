@@ -11,6 +11,7 @@ dash.register_page(
     analytics=True,
 )
 THEME = "plotly_white"
+test = "test1"
 
 color_map = {
     "Fossil Fuels": "rgb(2223,95,73)",
@@ -40,27 +41,31 @@ df_histo = pd.melt(df_histo, id_vars=["Country", "Continent", "Year"],
 df_histo["Electricity mode"] = df_histo["Electricity mode"].str.replace("Electricity from ", "")
 df_histo["Electricity mode"] = df_histo["Electricity mode"].str.replace(" (TWh)", "")
 
-
 layout = html.Div([
     html.Div([
-        html.H1("Energy Dashboard",
+        html.H1(children="Titre",
                 className="header_title",
+                id="titre"
                 )
     ],
         className="header",
     ),
 
-
     html.Div([
-        html.Div(dcc.Slider(
-            df_histo['Year'].min(),
-            df_histo['Year'].max(),
-            step=1,
-            id="slider",
-            value=df_histo['Year'].max(),
-            marks={str(year): str(year) for year in df_histo['Year'].unique() if year % 5 == 0}
-        ),
-            className="div_filter_bg")
+        html.Div([
+            dcc.Slider(
+                df_histo['Year'].min(),
+                df_histo['Year'].max(),
+                step=1,
+                id="slider",
+                value=df_histo['Year'].max(),
+                marks={str(year): str(year) for year in df_histo['Year'].unique() if year % 5 == 0}
+            ),
+            html.H2(
+                children="test",
+                id="pourcentage",
+                className="pourcentage"
+            ), ], className="div_filter_bg")
     ], className="div_filter"),
 
     html.Div([
@@ -88,6 +93,32 @@ layout = html.Div([
     ], className="div_hist"),
 ], className="html",
 )
+
+
+@callback(
+    Output("titre", "children"),
+    [Input("map", "hoverData"),
+     Input("slider", "value")]
+)
+def titre(hoverData, year_value):
+    pays = hoverData['points'][0]["location"]
+    titre = "Electricity production in " + pays + " in " + str(year_value) + " (TWh)"
+    return titre
+
+
+@callback(
+    Output("pourcentage", "children"),
+    [Input("slider", "value"),
+     Input("map", "hoverData")]
+)
+def pourcentage(year_value, hoverData):
+    pays = hoverData['points'][0]["location"]
+    pays_elec = df_histo.query("Country=='" + pays + "' and Year==" + str(year_value))["Electricity (TWh)"].sum()
+    tot_elec = df_histo.query("Year == "+str(year_value))["Electricity (TWh)"].sum()
+    percentage = (pays_elec / tot_elec) * 100
+    formatted_percentage = round(percentage, 2)
+    output_text = f"Total : {int(pays_elec)} TWh \n\n {formatted_percentage} % of world production"
+    return dcc.Markdown(output_text)
 
 
 @callback(
@@ -151,11 +182,12 @@ def pie(hoverData, year_value):
 
 @callback(
     Output("histogram", "figure"),
-    [Input("map", "hoverData")]
+    [Input("map", "hoverData"),
+     Input("slider", "value")]
 )
-def histogram(hoverData):
+def histogram(hoverData, year_value):
     pays = hoverData['points'][0]["location"]
-    df_histogram = df_histo.query("Country=='" + pays + "'").copy()
+    df_histogram = df_histo.query("Country=='" + pays + "' and Year<=" + str(year_value)).copy()
     df_histogram["Year"] = df_histogram["Year"].astype(str)
     fig = px.histogram(df_histogram,
                        x="Year",

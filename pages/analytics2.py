@@ -39,7 +39,7 @@ df_histo = pd.melt(df_histo, id_vars=["Country", "Continent", "Year"],
 # Renommer les catégories "Electricity from fossil fuels (TWh)", "Electricity from nuclear (TWh)", "Electricity from
 # renewable (TWh)" en "Fossil Fuels", "Nuclear", "Renewable" (ou les catégories de votre choix)
 df_histo["Electricity mode"] = df_histo["Electricity mode"].str.replace("Electricity from ", "")
-df_histo["Electricity mode"] = df_histo["Electricity mode"].str.replace(" (TWh)", "")
+df_histo["Electricity mode"] = df_histo["Electricity mode"].str.slice(stop=-6)
 
 layout = html.Div([
     html.Div([
@@ -116,7 +116,7 @@ def titre(hoverData, year_value):
 def pourcentage(year_value, hoverData):
     pays = hoverData['points'][0]["location"]
     pays_elec = df_histo.query("Country=='" + pays + "' and Year==" + str(year_value))["Electricity (TWh)"].sum()
-    tot_elec = df_histo.query("Year == "+str(year_value))["Electricity (TWh)"].sum()
+    tot_elec = df_histo.query("Year == " + str(year_value))["Electricity (TWh)"].sum()
     percentage = (pays_elec / tot_elec) * 100
     formatted_percentage = round(percentage, 2)
     output_text = f"Total : {int(pays_elec)} TWh \n\n {formatted_percentage} % of world production"
@@ -193,6 +193,7 @@ def histogram(hoverData, year_value):
     pays = hoverData['points'][0]["location"]
     df_histogram = df_histo.query("Country=='" + pays + "' and Year<=" + str(year_value)).copy()
     df_histogram["Year"] = df_histogram["Year"].astype(str)
+    print(df_histogram["Electricity mode"].unique())
     fig = px.histogram(df_histogram,
                        x="Year",
                        y="Electricity (TWh)",
@@ -206,5 +207,7 @@ def histogram(hoverData, year_value):
         height=300,
         margin=dict(l=50, r=20, t=20, b=100),
     )
-    fig.update_yaxes(title_text = "")
+    fig.update_traces()
+
+    fig.update_yaxes(title_text="")
     return fig
